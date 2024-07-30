@@ -1,4 +1,30 @@
 spring:
+  application:
+    name: FLUX
+  datasource:
+    url: jdbc:mysql://localhost:3306/flux
+    username: flux
+    password: flux8080
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: create-drop
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 1009714069325-ktbie6b6ipt0m71dkdgv21gnqsnk11l4.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - email
+              - profile
+server:
+  port: 8080
+
   datasource:
     url: jdbc:mysql://localhost:3306/flux_db  # 포트 번호를 MySQL의 기본 포트인 3306으로 수정했습니다.
     username: flux
