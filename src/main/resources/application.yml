@@ -10,7 +10,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-   hibernate:
+    hibernate:
       ddl-auto: update  # 데이터베이스 스키마 자동 업데이트 설정
     show-sql: true  # SQL 쿼리 로그 출력 설정
 server:
