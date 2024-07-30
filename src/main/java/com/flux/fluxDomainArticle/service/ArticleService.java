@@ -1,12 +1,14 @@
 package com.flux.fluxDomainArticle.service;
 
 import com.flux.fluxDomainArticle.model.Article;
+import com.flux.fluxDomainArticle.model.ArticleDTO;
 import com.flux.fluxDomainArticle.repository.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticleService {
@@ -18,14 +20,25 @@ public class ArticleService {
         this.articleRepository = articleRepository;
     }
 
-    public List<Article> getAllArticles() {
-        return articleRepository.findAll();
+    public List<ArticleDTO> getAllArticles() {
+        return articleRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    public Optional<Article> getArticleById(Integer ariticleId) {
-        if (!(ariticleId != null) || ariticleId <= 0) {
-            throw new IllegalArgumentException("Invalid ariticleId: " + ariticleId);
-        }
-        return articleRepository.findById(ariticleId);
+    public Optional<ArticleDTO> getArticleById(Integer articleId) {
+        return articleRepository.findById(articleId).map(this::convertToDTO);
+    }
+
+    private ArticleDTO convertToDTO(Article article) {
+        return new ArticleDTO(
+                article.getArticleId(),
+                article.getArticleImgs(),
+                article.getArticleTitle(),
+                article.getArticleCategory(),
+                article.getArticleContents(),
+                article.getArticleCreateAt(),
+                article.getArticleUpdateAt(),
+                article.getArticleView(),
+                article.getUserId()
+        );
     }
 }

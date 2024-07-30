@@ -1,6 +1,7 @@
 package com.flux.fluxDomainArticle.controller;
 
 import com.flux.fluxDomainArticle.model.Article;
+import com.flux.fluxDomainArticle.model.ArticleDTO;
 import com.flux.fluxDomainArticle.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,21 +25,15 @@ public class ArticleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Article>> getAllArticles() {
-        List<Article> articles = articleService.getAllArticles();
-        if (articles.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
+    public ResponseEntity<List<ArticleDTO>> getAllArticles() {
+        List<ArticleDTO> articles = articleService.getAllArticles();
         return ResponseEntity.ok(articles);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Article> getArticleById(@PathVariable Integer id) {
-        Optional<Article> article = articleService.getArticleById(id);
-        if (article.isPresent()) {
-            return ResponseEntity.ok(article.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<ArticleDTO> getArticleById(@PathVariable Integer id) {
+        return articleService.getArticleById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
