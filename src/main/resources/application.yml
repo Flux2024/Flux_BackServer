@@ -12,15 +12,5 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: create-drop
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: 1009714069325-ktbie6b6ipt0m71dkdgv21gnqsnk11l4.apps.googleusercontent.com
-            client-secret: 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
-            scope:
-              - email
-              - profile
 server:
   port: 8080
