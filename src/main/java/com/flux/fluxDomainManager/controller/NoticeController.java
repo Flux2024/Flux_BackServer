@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:8000")
 @RestController
 @RequestMapping("/notification")
 public class NoticeController {
@@ -19,7 +20,8 @@ public class NoticeController {
 
     @GetMapping
     public ResponseEntity<List<NoticeEntity>> getNotices() {
-        return ResponseEntity.ok(noticeService.getAllNotices());
+        List<NoticeEntity> notices = noticeService.getAllNotices();
+        return ResponseEntity.ok(notices);
     }
 
     @GetMapping("/{id}")
@@ -30,13 +32,17 @@ public class NoticeController {
 
     @PostMapping
     public ResponseEntity<NoticeEntity> createNotice(@RequestBody NoticeEntity notice) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(noticeService.createNotice(notice));
+        NoticeEntity createdNotice = noticeService.createNotice(notice);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdNotice);
     }
 
-    @PutMapping
-    public ResponseEntity<NoticeEntity> updateNotice(@RequestBody NoticeEntity notice) {
+    @PutMapping("/{id}")
+    public ResponseEntity<NoticeEntity> updateNotice(
+            @PathVariable Long id, @RequestBody NoticeEntity notice) {
         try {
-            return ResponseEntity.ok(noticeService.updateNotice(notice));
+            notice.setNoticeId(id);
+            NoticeEntity updatedNotice = noticeService.updateNotice(notice);
+            return ResponseEntity.ok(updatedNotice);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }

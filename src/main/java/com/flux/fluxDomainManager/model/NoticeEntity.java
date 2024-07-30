@@ -1,14 +1,10 @@
 package com.flux.fluxDomainManager.model;
 
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "notification")
 public class NoticeEntity {
 
     @Id
@@ -17,22 +13,25 @@ public class NoticeEntity {
 
     private Long userId;
     private String noticeTitle;
-    private String noticeContent;
+    private String noticeContent; // 필드명 변경 (여기서는 noticeContent)
     private LocalDateTime noticeCreateAt;
     private LocalDateTime noticeUpdateAt;
 
+    // 기본 생성자
     public NoticeEntity() {
     }
 
-    public NoticeEntity(Long noticeId, Long userId, String noticeTitle, String noticeContents, LocalDateTime noticeCreateAt, LocalDateTime noticeUpdateAt) {
+    // 전체 필드를 매개변수로 하는 생성자
+    public NoticeEntity(Long noticeId, Long userId, String noticeTitle, String noticeContent, LocalDateTime noticeCreateAt, LocalDateTime noticeUpdateAt) {
         this.noticeId = noticeId;
         this.userId = userId;
         this.noticeTitle = noticeTitle;
-        this.noticeContent = noticeContents;
+        this.noticeContent = noticeContent; // 필드명 변경 (여기서는 noticeContent)
         this.noticeCreateAt = noticeCreateAt;
         this.noticeUpdateAt = noticeUpdateAt;
     }
 
+    // Getter 및 Setter
     public Long getNoticeId() {
         return noticeId;
     }
