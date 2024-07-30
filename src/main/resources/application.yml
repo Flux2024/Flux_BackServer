@@ -1,4 +1,5 @@
 spring:
+<<<<<<< HEAD
   datasource:
     url: jdbc:mysql://localhost:3306/flux_db  # 포트 번호를 MySQL의 기본 포트인 3306으로 수정했습니다.
     username: flux
@@ -12,3 +13,20 @@ spring:
 
   server:
     port: 8001  # 서버 포트 설정
+=======
+  application:
+    name: FLUX
+  datasource:
+    url: jdbc:mysql://localhost:3306/flux
+    username: flux
+    password: flux8080
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: create-drop
+server:
+  port: 8080
+>>>>>>> 7b80d0cca67ab71a02b2886c6010a19dcf310296
