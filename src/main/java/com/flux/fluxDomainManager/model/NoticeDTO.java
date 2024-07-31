@@ -7,18 +7,18 @@ public class NoticeDTO {
 
     private Long userId;
     private String noticeTitle;
-    private String noticeContents;
-    private LocalDateTime noticeCreateAt;
-    private LocalDateTime noticeUpdateAt;
+    private String noticeContent;
+    private String noticeCreateAt;
+    private String noticeUpdateAt;
 
     public NoticeDTO() {
     }
 
-    public NoticeDTO(Long noticeId, Long userId, String noticeTitle, String noticeContents, LocalDateTime noticeCreateAt, LocalDateTime noticeUpdateAt) {
+    public NoticeDTO(Long noticeId, Long userId, String noticeTitle, String noticeContents, String noticeCreateAt, String noticeUpdateAt) {
         this.noticeId = noticeId;
         this.userId = userId;
         this.noticeTitle = noticeTitle;
-        this.noticeContents = noticeContents;
+        this.noticeContent = noticeContents;
         this.noticeCreateAt = noticeCreateAt;
         this.noticeUpdateAt = noticeUpdateAt;
     }
@@ -47,27 +47,27 @@ public class NoticeDTO {
         this.noticeTitle = noticeTitle;
     }
 
-    public String getNoticeContents() {
-        return noticeContents;
+    public String getNoticeContent() {
+        return noticeContent;
     }
 
-    public void setNoticeContents(String noticeContents) {
-        this.noticeContents = noticeContents;
+    public void setNoticeContent(String noticeContent) {
+        this.noticeContent = noticeContent;
     }
 
-    public LocalDateTime getNoticeCreateAt() {
+    public String getNoticeCreateAt() {
         return noticeCreateAt;
     }
 
-    public void setNoticeCreateAt(LocalDateTime noticeCreateAt) {
+    public void setNoticeCreateAt(String noticeCreateAt) {
         this.noticeCreateAt = noticeCreateAt;
     }
 
-    public LocalDateTime getNoticeUpdateAt() {
+    public String getNoticeUpdateAt() {
         return noticeUpdateAt;
     }
 
-    public void setNoticeUpdateAt(LocalDateTime noticeUpdateAt) {
+    public void setNoticeUpdateAt(String noticeUpdateAt) {
         this.noticeUpdateAt = noticeUpdateAt;
     }
 }

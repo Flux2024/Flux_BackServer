@@ -1,5 +1,6 @@
 package com.flux.fluxDomainManager.controller;
 
+import com.flux.fluxDomainManager.model.NoticeDTO;
 import com.flux.fluxDomainManager.model.NoticeEntity;
 import com.flux.fluxDomainManager.service.NoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,10 +32,28 @@ public class NoticeController {
         return notice.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<NoticeEntity>> getAllNotices() {
+        List<NoticeEntity> notices = noticeService.getAllNotices();
+        return ResponseEntity.ok(notices);
+    }
+
+
     @PostMapping
     public ResponseEntity<NoticeEntity> createNotice(@RequestBody NoticeEntity notice) {
         NoticeEntity createdNotice = noticeService.createNotice(notice);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdNotice);
+    }
+
+    @PostMapping("/notification")
+    public ResponseEntity<?> createNotification(@RequestBody NoticeDTO notificationDTO) {
+        try {
+            NoticeEntity createdNotice = noticeService.save(notificationDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdNotice);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("공지 등록 실패");
+        }
     }
 
     @PutMapping("/{id}")
