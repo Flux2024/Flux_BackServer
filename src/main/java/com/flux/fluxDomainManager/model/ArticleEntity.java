@@ -13,6 +13,9 @@ public class ArticleEntity {
     @Column(name = "article_id")
     private Integer articleId;
 
+    @Column(name = "article_category")
+    private String articleCategory;
+
     @Column(name = "article_title", nullable = false)
     private String articleTitle;
 
@@ -50,9 +53,9 @@ public class ArticleEntity {
     }
 
     // 모든 필드를 포함하는 생성자
-
-    public ArticleEntity(Integer articleId, String articleTitle, String articleAuthor, String articleContent, LocalDateTime articleCreate, LocalDateTime articleUpdate, boolean articleStatus, String articleImgName, String saveImgName, String articleImgPath, String articleImgDescription) {
+    public ArticleEntity(Integer articleId, String articleCategory, String articleTitle, String articleAuthor, String articleContent, LocalDateTime articleCreate, LocalDateTime articleUpdate, boolean articleStatus, String articleImgName, String saveImgName, String articleImgPath, String articleImgDescription) {
         this.articleId = articleId;
+        this.articleCategory = articleCategory;
         this.articleTitle = articleTitle;
         this.articleAuthor = articleAuthor;
         this.articleContent = articleContent;
@@ -71,6 +74,14 @@ public class ArticleEntity {
 
     public void setArticleId(Integer articleId) {
         this.articleId = articleId;
+    }
+
+    public String getArticleCategory() {
+        return articleCategory;
+    }
+
+    public void setArticleCategory(String articleCategory) {
+        this.articleCategory = articleCategory;
     }
 
     public String getArticleTitle() {
@@ -157,6 +168,7 @@ public class ArticleEntity {
     public String toString() {
         return "ArticleEntity{" +
                 "articleId=" + articleId +
+                ", articleCategory='" + articleCategory + '\'' +
                 ", articleTitle='" + articleTitle + '\'' +
                 ", articleAuthor='" + articleAuthor + '\'' +
                 ", articleContent='" + articleContent + '\'' +

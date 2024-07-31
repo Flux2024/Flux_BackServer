@@ -40,14 +40,33 @@ public class ManagerArticleController {
         }
     }
 
-    // 등록 후 조회
-    @GetMapping
+    // 특정 아티클 조회
+    @GetMapping("/article/{articleId}")
+    public ResponseEntity<Map<String, Object>> getArticleById(@PathVariable Integer articleId) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            ArticleDTO article = articleService.getArticleById(articleId);
+            if (article != null) {
+                response.put("article", article);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                response.put("message", "아티클을 찾을 수 없습니다.");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (RuntimeException e) {
+            response.put("message", "아티클 조회 중 오류가 발생했습니다: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // 모든 활성 아티클 조회
+    @GetMapping("/active")
     public ResponseEntity<List<ArticleDTO>> getAllActiveArticles() {
         List<ArticleDTO> articles = articleService.getAllActiveArticles();
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
-    // Article 수정 엔드포인트 (이미지 파일 포함)
+    // 아티클 수정 (이미지 파일 포함)
     @PutMapping("/{articleId}")
     public ResponseEntity<Map<String, Object>> updateArticle(
             @PathVariable Integer articleId,
@@ -68,7 +87,7 @@ public class ManagerArticleController {
         }
     }
 
-    // Article 삭제 엔드포인트 (실제 삭제 X / status값 false로 변경)
+    // 아티클 삭제 (실제 삭제 X / status값 false로 변경)
     @DeleteMapping("/{articleId}")
     public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable Integer articleId) {
         Map<String, String> response = new HashMap<>();
