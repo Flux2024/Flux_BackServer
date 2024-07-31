@@ -5,16 +5,16 @@ import com.flux.fluxDomainManager.model.ArticleEntity;
 import com.flux.fluxDomainManager.repository.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.io.ResourceLoader;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.Optional;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,7 +48,7 @@ public class ArticleService {
         }
 
         // articleCreate와 articleStatus 값을 설정
-        articleDTO.setArticleCreate(LocalDateTime.now()); // 아티클 등록 시점 시간(date타임보다 이게 더 낫다고 추천되길래)
+        articleDTO.setArticleCreate(LocalDateTime.now()); // 아티클 등록 시점 시간
         articleDTO.setArticleStatus(true); // status는 boolean으로 만들었음.
 
         // DTO를 Entity로 변환 후 저장
@@ -80,9 +80,14 @@ public class ArticleService {
                 .collect(Collectors.toList());
     }
 
-    // id값 불러오기
-    public Optional<ArticleEntity> findArticleById(Integer articleId) {
-        return articleRepository.findById(articleId);
+    // 특정 아티클 조회
+    public ArticleDTO getArticleById(Integer articleId) {
+        Optional<ArticleEntity> articleEntityOpt = articleRepository.findById(articleId);
+        if (articleEntityOpt.isPresent()) {
+            return convertEntityToDTO(articleEntityOpt.get());
+        } else {
+            throw new RuntimeException("아티클을 찾을 수 없습니다. ID: " + articleId);
+        }
     }
 
     // 아티클 수정

@@ -12,6 +12,8 @@ public class ArticleDTO {
 
     private Integer articleId;
 
+    private String articleCategory;
+
     private String articleTitle;
 
     private String articleAuthor;
@@ -27,12 +29,13 @@ public class ArticleDTO {
     public ArticleDTO() {
     }
 
-    public ArticleDTO(String articleImgName, String saveImgName, String articleImgPath, String articleImgDescription, Integer articleId, String articleTitle, String articleAuthor, String articleContent, LocalDateTime articleCreate, LocalDateTime articleUpdate, boolean articleStatus) {
+    public ArticleDTO(String articleImgName, String saveImgName, String articleImgPath, String articleImgDescription, Integer articleId, String articleCategory, String articleTitle, String articleAuthor, String articleContent, LocalDateTime articleCreate, LocalDateTime articleUpdate, boolean articleStatus) {
         this.articleImgName = articleImgName;
         this.saveImgName = saveImgName;
         this.articleImgPath = articleImgPath;
         this.articleImgDescription = articleImgDescription;
         this.articleId = articleId;
+        this.articleCategory = articleCategory;
         this.articleTitle = articleTitle;
         this.articleAuthor = articleAuthor;
         this.articleContent = articleContent;
@@ -79,6 +82,14 @@ public class ArticleDTO {
 
     public void setArticleId(Integer articleId) {
         this.articleId = articleId;
+    }
+
+    public String getArticleCategory() {
+        return articleCategory;
+    }
+
+    public void setArticleCategory(String articleCategory) {
+        this.articleCategory = articleCategory;
     }
 
     public String getArticleTitle() {
@@ -137,6 +148,7 @@ public class ArticleDTO {
         articleEntity.setArticleImgPath(this.articleImgPath);
         articleEntity.setArticleImgDescription(this.articleImgDescription);
         articleEntity.setArticleTitle(this.articleTitle);
+        articleEntity.setArticleCategory(this.articleCategory);
         articleEntity.setArticleAuthor(this.articleAuthor);
         articleEntity.setArticleContent(this.articleContent);
         articleEntity.setArticleCreate(this.articleCreate);
@@ -153,6 +165,7 @@ public class ArticleDTO {
                 ", articleImgPath='" + articleImgPath + '\'' +
                 ", articleImgDescription='" + articleImgDescription + '\'' +
                 ", articleId=" + articleId +
+                ", articleCategory='" + articleCategory + '\'' +
                 ", articleTitle='" + articleTitle + '\'' +
                 ", articleAuthor='" + articleAuthor + '\'' +
                 ", articleContent='" + articleContent + '\'' +
