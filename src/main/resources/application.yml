@@ -11,12 +11,9 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
     show-sql: true
-    format_sql: true # SQL 쿼리 포맷팅
-
 
   server:
     port: 8080
