@@ -22,10 +22,12 @@ public class ArticleDTO {
 
     private LocalDateTime articleUpdate;
 
+    private boolean articleStatus;
+
     public ArticleDTO() {
     }
 
-    public ArticleDTO(String articleImgName, String saveImgName, String articleImgPath, String articleImgDescription, Integer articleId, String articleTitle, String articleAuthor, String articleContent, LocalDateTime articleCreate, LocalDateTime articleUpdate) {
+    public ArticleDTO(String articleImgName, String saveImgName, String articleImgPath, String articleImgDescription, Integer articleId, String articleTitle, String articleAuthor, String articleContent, LocalDateTime articleCreate, LocalDateTime articleUpdate, boolean articleStatus) {
         this.articleImgName = articleImgName;
         this.saveImgName = saveImgName;
         this.articleImgPath = articleImgPath;
@@ -36,6 +38,7 @@ public class ArticleDTO {
         this.articleContent = articleContent;
         this.articleCreate = articleCreate;
         this.articleUpdate = articleUpdate;
+        this.articleStatus = articleStatus;
     }
 
     public String getArticleImgName() {
@@ -118,6 +121,30 @@ public class ArticleDTO {
         this.articleUpdate = articleUpdate;
     }
 
+    public boolean isArticleStatus() {
+        return articleStatus;
+    }
+
+    public void setArticleStatus(boolean articleStatus) {
+        this.articleStatus = articleStatus;
+    }
+
+    // DTO를 Entity로 변환하는 메서드
+    public ArticleEntity toEntity() {
+        ArticleEntity articleEntity = new ArticleEntity();
+        articleEntity.setArticleImgName(this.articleImgName);
+        articleEntity.setSaveImgName(this.saveImgName);
+        articleEntity.setArticleImgPath(this.articleImgPath);
+        articleEntity.setArticleImgDescription(this.articleImgDescription);
+        articleEntity.setArticleTitle(this.articleTitle);
+        articleEntity.setArticleAuthor(this.articleAuthor);
+        articleEntity.setArticleContent(this.articleContent);
+        articleEntity.setArticleCreate(this.articleCreate);
+        articleEntity.setArticleUpdate(this.articleUpdate);
+        articleEntity.setArticleStatus(this.articleStatus);
+        return articleEntity;
+    }
+
     @Override
     public String toString() {
         return "ArticleDTO{" +
@@ -131,6 +158,7 @@ public class ArticleDTO {
                 ", articleContent='" + articleContent + '\'' +
                 ", articleCreate=" + articleCreate +
                 ", articleUpdate=" + articleUpdate +
+                ", articleStatus=" + articleStatus +
                 '}';
     }
 }

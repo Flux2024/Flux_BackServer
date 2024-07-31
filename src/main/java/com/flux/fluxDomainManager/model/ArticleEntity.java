@@ -28,6 +28,9 @@ public class ArticleEntity {
     @Column(name = "article_update")
     private LocalDateTime articleUpdate;
 
+    @Column(name = "article_status")
+    private boolean articleStatus;
+
     // 이미지 등록용 엔티티 필드
     @Column(name = "article_img_name")
     private String articleImgName; // 파일의 이름
@@ -47,49 +50,18 @@ public class ArticleEntity {
     }
 
     // 모든 필드를 포함하는 생성자
-    public ArticleEntity(String articleImgName, String saveImgName, String articleImgPath, String articleImgDescription, Integer articleId, String articleTitle, String articleAuthor, String articleContent, LocalDateTime articleCreate, LocalDateTime articleUpdate) {
-        this.articleImgName = articleImgName;
-        this.saveImgName = saveImgName;
-        this.articleImgPath = articleImgPath;
-        this.articleImgDescription = articleImgDescription;
+
+    public ArticleEntity(Integer articleId, String articleTitle, String articleAuthor, String articleContent, LocalDateTime articleCreate, LocalDateTime articleUpdate, boolean articleStatus, String articleImgName, String saveImgName, String articleImgPath, String articleImgDescription) {
         this.articleId = articleId;
         this.articleTitle = articleTitle;
         this.articleAuthor = articleAuthor;
         this.articleContent = articleContent;
         this.articleCreate = articleCreate;
         this.articleUpdate = articleUpdate;
-    }
-
-    // Getters and Setters
-    public String getArticleImgName() {
-        return articleImgName;
-    }
-
-    public void setArticleImgName(String articleImgName) {
+        this.articleStatus = articleStatus;
         this.articleImgName = articleImgName;
-    }
-
-    public String getSaveImgName() {
-        return saveImgName;
-    }
-
-    public void setSaveImgName(String saveImgName) {
         this.saveImgName = saveImgName;
-    }
-
-    public String getArticleImgPath() {
-        return articleImgPath;
-    }
-
-    public void setArticleImgPath(String articleImgPath) {
         this.articleImgPath = articleImgPath;
-    }
-
-    public String getArticleImgDescription() {
-        return articleImgDescription;
-    }
-
-    public void setArticleImgDescription(String articleImgDescription) {
         this.articleImgDescription = articleImgDescription;
     }
 
@@ -141,19 +113,60 @@ public class ArticleEntity {
         this.articleUpdate = articleUpdate;
     }
 
+    public boolean isArticleStatus() {
+        return articleStatus;
+    }
+
+    public void setArticleStatus(boolean articleStatus) {
+        this.articleStatus = articleStatus;
+    }
+
+    public String getArticleImgName() {
+        return articleImgName;
+    }
+
+    public void setArticleImgName(String articleImgName) {
+        this.articleImgName = articleImgName;
+    }
+
+    public String getSaveImgName() {
+        return saveImgName;
+    }
+
+    public void setSaveImgName(String saveImgName) {
+        this.saveImgName = saveImgName;
+    }
+
+    public String getArticleImgPath() {
+        return articleImgPath;
+    }
+
+    public void setArticleImgPath(String articleImgPath) {
+        this.articleImgPath = articleImgPath;
+    }
+
+    public String getArticleImgDescription() {
+        return articleImgDescription;
+    }
+
+    public void setArticleImgDescription(String articleImgDescription) {
+        this.articleImgDescription = articleImgDescription;
+    }
+
     @Override
     public String toString() {
         return "ArticleEntity{" +
-                "articleImgName='" + articleImgName + '\'' +
-                ", saveImgName='" + saveImgName + '\'' +
-                ", articleImgPath='" + articleImgPath + '\'' +
-                ", articleImgDescription='" + articleImgDescription + '\'' +
-                ", articleId=" + articleId +
+                "articleId=" + articleId +
                 ", articleTitle='" + articleTitle + '\'' +
                 ", articleAuthor='" + articleAuthor + '\'' +
                 ", articleContent='" + articleContent + '\'' +
                 ", articleCreate=" + articleCreate +
                 ", articleUpdate=" + articleUpdate +
+                ", articleStatus=" + articleStatus +
+                ", articleImgName='" + articleImgName + '\'' +
+                ", saveImgName='" + saveImgName + '\'' +
+                ", articleImgPath='" + articleImgPath + '\'' +
+                ", articleImgDescription='" + articleImgDescription + '\'' +
                 '}';
     }
 }
