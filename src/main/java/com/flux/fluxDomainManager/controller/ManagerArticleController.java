@@ -1,7 +1,7 @@
 package com.flux.fluxDomainManager.controller;
 
-import com.flux.fluxDomainManager.model.ApiResponse;
 import com.flux.fluxDomainManager.model.ArticleDTO;
+import com.flux.fluxDomainManager.model.ArticleEntity;
 import com.flux.fluxDomainManager.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,65 +10,76 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:8000")
 @RestController
 @RequestMapping("/manager/article")
-@CrossOrigin(origins = "http://localhost:8080") // 프론트엔드 주소에 맞게 변경
 public class ManagerArticleController {
 
     @Autowired
     private ArticleService articleService;
 
-    // 아티클 등록 / 제목 내용 이미지 유효성검사 등록시간 유저아이디
+    // 아티클 등록 (이미지 파일 포함)
     @PostMapping("/articlepost")
-    public ResponseEntity<ApiResponse> postArticle(@RequestParam("articleImgFile") MultipartFile articleImgFile,
-                                                   @RequestParam("articleTitle") String articleTitle,
-                                                   @RequestParam("articleAuthor") String articleAuthor,
-                                                   @RequestParam("articleContent") String articleContent) {
-        try {
-            // Service를 호출하여 ArticleDTO를 생성
-            ArticleDTO articleDTO = articleService.createArticle(articleImgFile, articleTitle, articleAuthor, articleContent);
+    public ResponseEntity<Map<String, Object>> createArticleWithFiles(
+            @RequestPart("article") ArticleDTO articleDTO,
+            @RequestPart("files") List<MultipartFile> multipartFiles) {
+        Map<String, Object> response = new HashMap<>();
 
-            // 성공 시 응답
-            return ResponseEntity.ok(new ApiResponse("Article이 등록되었습니다.", articleDTO));
+        try {
+            ArticleEntity savedArticle = articleService.saveArticle(articleDTO, multipartFiles);
+            response.put("message", "아티클이 성공적으로 등록되었습니다.");
+            response.put("article", savedArticle);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (IOException e) {
-            // 실패 시 응답
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse("Article 등록에 실패했습니다. 다시 시도해 주세요."));
+            response.put("message", "이미지 업로드 중 오류가 발생했습니다: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    // 세부 조회
-//    @GetMapping("/{articleId}")
-//    public ResponseEntity<ApiResponse> getArticle(@PathVariable Integer articleId) {
-//        try {
-//            ArticleDTO articleDTO = articleService.getArticleById(articleId);
-//            if (articleDTO != null) {
-//                return ResponseEntity.ok(new ApiResponse("Article을 가져왔습니다.", articleDTO));
-//            } else {
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                        .body(new ApiResponse("Article을 찾을 수 없습니다."));
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(new ApiResponse("Article 가져오기에 실패했습니다."));
-//        }
-//    }
-//
-//    // 삭제
-//    @DeleteMapping("/{articleId}")
-//    public ResponseEntity<ApiResponse> deleteArticle(@PathVariable Integer articleId) {
-//        try {
-//            articleService.deleteArticle(articleId);
-//            return ResponseEntity.noContent().build();
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(new ApiResponse("Article 삭제에 실패했습니다."));
-//        }
+    // 등록 후 조회
+    @GetMapping
+    public ResponseEntity<List<ArticleDTO>> getAllActiveArticles() {
+        List<ArticleDTO> articles = articleService.getAllActiveArticles();
+        return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
+    // Article 수정 엔드포인트 (이미지 파일 포함)
+    @PutMapping("/{articleId}")
+    public ResponseEntity<Map<String, Object>> updateArticle(
+            @PathVariable Integer articleId,
+            @RequestPart("article") ArticleDTO articleDTO,
+            @RequestPart("files") List<MultipartFile> multipartFiles) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            ArticleDTO updatedArticle = articleService.updateArticle(articleId, articleDTO, multipartFiles);
+            response.put("message", "아티클이 성공적으로 수정되었습니다.");
+            response.put("article", updatedArticle);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (IOException e) {
+            response.put("message", "파일 업로드 중 오류가 발생했습니다: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (RuntimeException e) {
+            response.put("message", "아티클 수정 중 오류가 발생했습니다: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
 
+    // Article 삭제 엔드포인트 (실제 삭제 X / status값 false로 변경)
+    @DeleteMapping("/{articleId}")
+    public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable Integer articleId) {
+        Map<String, String> response = new HashMap<>();
 
-
-
-
+        try {
+            articleService.deleteArticle(articleId);
+            response.put("message", "아티클이 성공적으로 삭제되었습니다.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            response.put("message", "아티클 삭제 중 오류가 발생했습니다: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+}
