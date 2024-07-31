@@ -13,7 +13,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
     show-sql: true  # SQL 쿼리 로그 출력 설정
-        format_sql: true # SQL 쿼리 포맷팅
-    show-sql: true # SQL 쿼리 로그 출력
+    format_sql: true # SQL 쿼리 포맷팅
+
   server:
     port: 8080
