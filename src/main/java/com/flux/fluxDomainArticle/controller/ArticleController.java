@@ -1,6 +1,5 @@
 package com.flux.fluxDomainArticle.controller;
 
-import com.flux.fluxDomainArticle.model.Article;
 import com.flux.fluxDomainArticle.model.ArticleDTO;
 import com.flux.fluxDomainArticle.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/articles")
