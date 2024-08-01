@@ -36,6 +36,7 @@ public class MarketService {
         return market.map(this::convertToDTO);
     }
 
+    // entity 와의 연결성을 줄이기 위해 사용
     private MarketDTO convertToDTO(Market market) {
         return new MarketDTO(
                 market.getMarketId(),
