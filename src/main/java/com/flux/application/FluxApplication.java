@@ -1,5 +1,6 @@
 package com.flux.application;
 
+
 import com.flux.fluxDomainLogin.config.AppProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
