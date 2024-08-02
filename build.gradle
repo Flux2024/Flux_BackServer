@@ -24,33 +24,28 @@ repositories {
 }
 
 dependencies {
-    // spring web
+    // Spring Boot Starter Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    implementation 'org.springframework.boot:spring-boot-starter'
-    compileOnly 'org.projectlombok:lombok'
-
-
-
-    // jpa
+    // JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'com.mysql:mysql-connector-j:8.0.32'
 
-    // test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // lombok
+    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // oauth2
+    // OAuth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-    // jwt
+    // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
