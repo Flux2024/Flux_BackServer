@@ -26,7 +26,7 @@ public class CustomOAuth2User implements OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();
-        collection.add((GrantedAuthority) () -> role);
+        collection.add((GrantedAuthority) () -> "ROLE_" + role); // Spring Security에서 역할은 항상 'ROLE_' 접두어가 붙어야 합니다.
         return collection;
     }
 
