@@ -1,18 +1,22 @@
 package com.flux.article.controller;
 
+import com.flux.article.model.Article;
 import com.flux.article.model.ArticleDTO;
 import com.flux.article.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/articles")
+@CrossOrigin(origins = "http://localhost:8000") // 프론트엔드서버 주소
 public class ArticleController {
 
     private final ArticleService articleService;
@@ -22,16 +26,72 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
+    // 아티클 등록 (이미지 파일 포함)
+    @PostMapping("/articlepost")
+    public ResponseEntity<Map<String, Object>> createArticleWithFiles(
+            @RequestPart("article") ArticleDTO articleDTO,
+            @RequestPart(name = "files", required = false) List<MultipartFile> multipartFiles) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Article savedArticle = articleService.saveArticle(articleDTO, multipartFiles);
+            response.put("message", "아티클이 성공적으로 등록되었습니다.");
+            response.put("article", savedArticle);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (IOException e) {
+            response.put("message", "이미지 업로드 중 오류가 발생했습니다: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // 전체 조회
     @GetMapping
     public ResponseEntity<List<ArticleDTO>> getAllArticles() {
         List<ArticleDTO> articles = articleService.getAllArticles();
         return ResponseEntity.ok(articles);
     }
 
+    // 상세 조회
     @GetMapping("/{id}")
     public ResponseEntity<ArticleDTO> getArticleById(@PathVariable Integer id) {
         return articleService.getArticleById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    // 아티클 수정 (이미지 파일 포함)
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> updateArticle(
+            @PathVariable Integer id,
+            @RequestPart("article") ArticleDTO articleDTO,
+            @RequestPart(name = "files", required = false) List<MultipartFile> multipartFiles) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            ArticleDTO updatedArticle = articleService.updateArticle(id, articleDTO, multipartFiles);
+            response.put("message", "아티클이 성공적으로 수정되었습니다.");
+            response.put("article", updatedArticle);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (IOException e) {
+            response.put("message", "파일 업로드 중 오류가 발생했습니다: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (RuntimeException e) {
+            response.put("message", "아티클 수정 중 오류가 발생했습니다: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // 아티클 삭제 (실제 삭제 X / status값 false로 변경)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable Integer id) {
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            articleService.deleteArticle(id);
+            response.put("message", "아티클이 성공적으로 삭제되었습니다.");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            response.put("message", "아티클 삭제 중 오류가 발생했습니다: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
     }
 }
