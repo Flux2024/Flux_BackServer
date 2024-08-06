@@ -20,13 +20,13 @@ public class MarketDTO {
     private int marketMaxprice;
     private String marketCategory;
     private String marketContents;
-    private boolean marketOrderablestatus;
+    private MarketStatus marketOrderablestatus;
     private LocalDateTime marketCreateAt;
     private LocalDateTime marketUpdateAt;
     private LocalDateTime marketSelldate;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private String marketView;
+    private int marketView;
 
     private Integer userId;
 }

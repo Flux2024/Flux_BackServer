@@ -47,8 +47,12 @@ public class Market {
     @Column(name = "market_orderablestatus", nullable = false)
     private boolean marketOrderablestatus = true;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MarketStatus marketOrderableStatus = MarketStatus.AVAILABLE;
+
     @CreationTimestamp
-    @Column(name = "market_createat", nullable = false, updatable = false)
+    @Column(name = "market_createat")
     private LocalDateTime marketCreateAt;
 
     @UpdateTimestamp
@@ -65,5 +69,5 @@ public class Market {
     private LocalDateTime endDate;
 
     @Column(name = "market_view", nullable = false)
-    private String marketView;
+    private int marketView;
 }
