@@ -1,6 +1,5 @@
 package com.flux.auth.service;
 
-
 import com.flux.auth.dto.CustomOAuth2User;
 import com.flux.auth.dto.GoogleResponse;
 import com.flux.auth.dto.NaverResponse;
@@ -15,7 +14,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -42,7 +40,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         String email = oAuth2Response.getEmail();
-        String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
+        String username = oAuth2Response.getName();  // name을 사용하여 사용자 이름 저장
 
         Optional<User> userOptional = userRepository.findByEmail(email);
         Role role;
