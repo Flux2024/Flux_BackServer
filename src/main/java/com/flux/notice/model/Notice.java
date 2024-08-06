@@ -1,36 +1,102 @@
 package com.flux.notice.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "notice")
-@Data
+@Table(name = "notification")
 public class Notice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "notice_id", nullable = false)
-    private Integer noticeId;
+    @Column(name = "notice_id", updatable = false, nullable = false)
+    private Long noticeId;
 
-    @Column(name = "notice_title", nullable = false)
-    private String title;
+    @Column(name = "user_id")
+    private Long userId;
 
-    @Column(name = "notice_contents", nullable = false)
-    private String noticeContents;
+    @Column(name = "notice_title")
+    private String noticeTitle;
 
-    @CreationTimestamp
-    @Column(name = "notice_createat", nullable = false)
+    @Column(name = "notice_content")
+    private String noticeContent;
+
+    @Column(name = "notice_create_at")
     private LocalDateTime noticeCreateAt;
 
-    @UpdateTimestamp
-    @Column(name = "notice_updateat")
+    @Column(name = "notice_update_at")
     private LocalDateTime noticeUpdateAt;
 
-    @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    public Notice() {
+    }
+
+    public Notice(Long noticeId, Long userId, String noticeTitle, String noticeContent, LocalDateTime noticeCreateAt, LocalDateTime noticeUpdateAt) {
+        this.noticeId = noticeId;
+        this.userId = userId;
+        this.noticeTitle = noticeTitle;
+        this.noticeContent = noticeContent;
+        this.noticeCreateAt = noticeCreateAt;
+        this.noticeUpdateAt = noticeUpdateAt;
+    }
+
+    public Long getNoticeId() {
+        return noticeId;
+    }
+
+    public void setNoticeId(Long noticeId) {
+        this.noticeId = noticeId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getNoticeTitle() {
+        return noticeTitle;
+    }
+
+    public void setNoticeTitle(String noticeTitle) {
+        this.noticeTitle = noticeTitle;
+    }
+
+    public String getNoticeContent() {
+        return noticeContent;
+    }
+
+    public void setNoticeContent(String noticeContent) {
+        this.noticeContent = noticeContent;
+    }
+
+    public LocalDateTime getNoticeCreateAt() {
+        return noticeCreateAt;
+    }
+
+    public void setNoticeCreateAt(LocalDateTime noticeCreateAt) {
+        this.noticeCreateAt = noticeCreateAt;
+    }
+
+    public LocalDateTime getNoticeUpdateAt() {
+        return noticeUpdateAt;
+    }
+
+    public void setNoticeUpdateAt(LocalDateTime noticeUpdateAt) {
+        this.noticeUpdateAt = noticeUpdateAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Notice{" +
+                "noticeId=" + noticeId +
+                ", userId=" + userId +
+                ", noticeTitle='" + noticeTitle + '\'' +
+                ", noticeContent='" + noticeContent + '\'' +
+                ", noticeCreateAt=" + noticeCreateAt +
+                ", noticeUpdateAt=" + noticeUpdateAt +
+                '}';
+    }
 }
