@@ -18,9 +18,13 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class OAuth2Service {
+
+    private static final Logger logger = Logger.getLogger(OAuth2Service.class.getName());
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
@@ -40,6 +44,7 @@ public class OAuth2Service {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public String createNaverJwtToken(String authorizationHeader) {
+        logger.info("Creating Naver JWT token");
         String token = authorizationHeader.replace("Bearer ", "");
         String userInfoUrl = "https://openapi.naver.com/v1/nid/me";
         RestTemplate restTemplate = new RestTemplate();
@@ -58,15 +63,19 @@ public class OAuth2Service {
 
             User user = saveOrUpdateUser(email, name);
 
+            logger.info("Naver user info: " + userId + ", " + email + ", " + name);
             return generateJwtToken(userId, email, name);
         } catch (HttpClientErrorException e) {
+            logger.log(Level.SEVERE, "Failed to get user info from Naver", e);
             throw new RuntimeException("Failed to get user info from Naver", e);
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "An unexpected error occurred", e);
             throw new RuntimeException("An unexpected error occurred", e);
         }
     }
 
     public String createGoogleJwtToken(String code) {
+        logger.info("Creating Google JWT token");
         String tokenUrl = "https://oauth2.googleapis.com/token";
         RestTemplate restTemplate = new RestTemplate();
 
@@ -86,10 +95,13 @@ public class OAuth2Service {
             ResponseEntity<String> response = restTemplate.exchange(tokenUrl, HttpMethod.POST, entity, String.class);
             String idToken = objectMapper.readTree(response.getBody()).get("id_token").asText();
 
+            logger.info("Google ID Token: " + idToken);
             return createGoogleUserJwtToken(idToken);
         } catch (HttpClientErrorException e) {
+            logger.log(Level.SEVERE, "Failed to get access token from Google", e);
             throw new RuntimeException("Failed to get access token from Google", e);
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "An unexpected error occurred", e);
             throw new RuntimeException("An unexpected error occurred", e);
         }
     }
@@ -119,8 +131,10 @@ public class OAuth2Service {
 
             User user = saveOrUpdateUser(email, name);
 
+            logger.info("Google user info: " + userId + ", " + email + ", " + name);
             return generateJwtToken(userId, email, name);
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "An unexpected error occurred", e);
             throw new RuntimeException("An unexpected error occurred", e);
         }
     }
@@ -146,5 +160,23 @@ public class OAuth2Service {
                 .setExpiration(new Date(System.currentTimeMillis() + 864000000))
                 .signWith(SignatureAlgorithm.HS512, tokenSecret)
                 .compact();
+    }
+
+    public User getUserFromJwtToken(String jwtToken) {
+        String email = Jwts.parser().setSigningKey(tokenSecret).parseClaimsJws(jwtToken).getBody().getSubject();
+        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public ResponseEntity<Map<String, String>> buildResponse(String status, String jwtToken, User user) {
+        Map<String, String> response = new HashMap<>();
+        response.put("status", status);
+        if (jwtToken != null) {
+            response.put("jwtToken", jwtToken);
+        }
+        if (user != null) {
+            response.put("email", user.getEmail());
+            response.put("name", user.getUsername());
+        }
+        return ResponseEntity.ok(response);
     }
 }
