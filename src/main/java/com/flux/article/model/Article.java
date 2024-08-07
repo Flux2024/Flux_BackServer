@@ -1,6 +1,5 @@
 package com.flux.article.model;
 
-import com.flux.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -62,9 +61,5 @@ public class Article {
 
     @Column(name = "article_img_description")
     private String articleImgDescription;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id") // User 테이블의 user_id와 매핑
-    private User user;
 
 }

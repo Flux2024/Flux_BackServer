@@ -51,7 +51,7 @@ public class ArticleService {
 
                 articleDTO.setArticleImgName(originFileName);
                 articleDTO.setSaveImgName(savedName);
-                articleDTO.setArticleImgPath("static/img/multi/" + savedName);
+                articleDTO.setArticleImgPath("/img/multi/" + savedName);
             }
         }
 
@@ -65,7 +65,7 @@ public class ArticleService {
     }
 
     private String setFilePath() throws IOException {
-        Resource resource = resourceLoader.getResource("classpath:static/img/multi");
+        Resource resource = resourceLoader.getResource("classpath:/img/multi");
         String filePath;
 
         if (!resource.exists()) {
@@ -74,7 +74,7 @@ public class ArticleService {
             file.mkdirs();
             filePath = file.getAbsolutePath();
         } else {
-            filePath = resourceLoader.getResource("classpath:static/img/multi").getFile().getAbsolutePath();
+            filePath = resourceLoader.getResource("classpath:/img/multi").getFile().getAbsolutePath();
         }
         return filePath;
     }
@@ -111,7 +111,7 @@ public class ArticleService {
 
                     existingArticle.setArticleImgName(originFileName);
                     existingArticle.setSaveImgName(savedName);
-                    existingArticle.setArticleImgPath("static/img/multi/" + savedName);
+                    existingArticle.setArticleImgPath("/img/multi/" + savedName);
                 }
             }
 
@@ -157,9 +157,9 @@ public class ArticleService {
                 article.getArticleCreateAt(),
                 article.getArticleUpdateAt(),
                 article.isArticleStatus(),
-                article.getArticleView(),
+                article.getArticleView()
                 // article.getUser().getUserid() // userId를 Long으로 설정
-                null // userId를 null로 설정
+                // userId를 null로 설정
         );
     }
 }

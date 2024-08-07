@@ -93,7 +93,7 @@ public class ArticleController {
 
     // 상세 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ArticleDTO> getArticleById(@PathVariable Integer id) {
+    public ResponseEntity<ArticleDTO> getArticleById(@PathVariable("id") Integer id) {
         return articleService.getArticleById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -102,7 +102,7 @@ public class ArticleController {
     // 아티클 수정 (이미지 파일 포함)
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> updateArticle(
-            @PathVariable Integer id,
+            @PathVariable("id") Integer id,
             @RequestPart("article") ArticleDTO articleDTO,
             @RequestPart(name = "files", required = false) List<MultipartFile> multipartFiles) {
         Map<String, Object> response = new HashMap<>();
@@ -122,7 +122,7 @@ public class ArticleController {
 
     // 아티클 삭제 (실제 삭제 X / status값 false로 변경)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable Integer id) {
+    public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable("id") Integer id) {
         Map<String, String> response = new HashMap<>();
 
         try {
