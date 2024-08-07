@@ -1,5 +1,6 @@
 package com.flux.article.model;
 
+import com.flux.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,9 +29,9 @@ public class ArticleDTO {
     private boolean articleStatus; // 수정 삭제용
     private int articleView;
 
-    private Integer userId;
+    private Long userId; // User 엔티티의 ID (Long 타입으로 변경)
 
-    // toEntity 메서드 추가
+    // toEntity 메서드 수정
     public Article toEntity() {
         Article article = new Article();
         article.setArticleId(this.articleId);
@@ -46,7 +47,14 @@ public class ArticleDTO {
         article.setArticleUpdateAt(this.articleUpdateAt);
         article.setArticleStatus(this.articleStatus);
         article.setArticleView(this.articleView);
-        article.setUserId(this.userId);
+
+        // User 엔티티 설정
+        if (this.userId != null) {
+            User user = new User();
+            user.setUserid(this.userId); // userId를 Long 타입으로 설정
+            article.setUser(user); // Article 엔티티의 User 필드 설정
+        }
+
         return article;
     }
 }
