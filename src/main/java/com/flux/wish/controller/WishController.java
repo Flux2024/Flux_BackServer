@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/wish")
+@CrossOrigin(origins = "http://localhost:8000") // 프론트엔드 서버에 cors 설정을 하는 어노테이션
 public class WishController {
 
     private final WishService wishService;

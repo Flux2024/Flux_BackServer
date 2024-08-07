@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:8000")
 @RestController
 @RequestMapping("/api/v1/notification")
+@CrossOrigin(origins = "http://localhost:8000") // 프론트엔드 서버에 cors 설정을 하는 어노테이션
 public class NoticeController {
 
     private final NoticeService noticeService;
