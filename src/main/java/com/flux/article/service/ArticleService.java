@@ -3,6 +3,7 @@ package com.flux.article.service;
 import com.flux.article.model.Article;
 import com.flux.article.model.ArticleDTO;
 import com.flux.article.repository.ArticleRepository;
+import com.flux.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -22,17 +23,26 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final ResourceLoader resourceLoader;
+    private final UserService userService; // UserService 추가
 
     @Autowired
-    public ArticleService(ArticleRepository articleRepository, ResourceLoader resourceLoader) {
+    public ArticleService(ArticleRepository articleRepository, ResourceLoader resourceLoader, UserService userService) {
         this.articleRepository = articleRepository;
         this.resourceLoader = resourceLoader;
+        this.userService = userService; // UserService 초기화
     }
 
+    // 등록
     public Article saveArticle(ArticleDTO articleDTO, List<MultipartFile> multipartFiles) throws IOException {
+        // User 정보를 가져오기 위해 userId 사용
+        // User user = userService.findUserById(articleDTO.getUserId());
+        // if (user == null) {
+        //     throw new IllegalArgumentException("유효하지 않은 사용자 ID입니다.");
+        // }
+
         if (multipartFiles != null && !multipartFiles.isEmpty()) {
             String filePath = setFilePath();
-            for(MultipartFile file : multipartFiles) {
+            for (MultipartFile file : multipartFiles) {
                 String originFileName = file.getOriginalFilename();
                 String ext = originFileName.substring(originFileName.lastIndexOf("."));
                 String savedName = UUID.randomUUID().toString().replace("-", "") + ext;
@@ -48,7 +58,9 @@ public class ArticleService {
         articleDTO.setArticleCreateAt(LocalDateTime.now());
         articleDTO.setArticleStatus(true);
 
+        // Article 엔티티 생성 및 user 설정
         Article articleEntity = articleDTO.toEntity();
+        // articleEntity.setUser(user); // User 설정
         return articleRepository.save(articleEntity);
     }
 
@@ -67,18 +79,21 @@ public class ArticleService {
         return filePath;
     }
 
+    // 전체 조회
     public List<ArticleDTO> getAllArticles() {
         return articleRepository.findByArticleStatusTrue().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    // 상세 조회
     public Optional<ArticleDTO> getArticleById(Integer articleId) {
         return articleRepository.findById(articleId)
                 .filter(Article::isArticleStatus)
                 .map(this::convertToDTO);
     }
 
+    // 수정
     public ArticleDTO updateArticle(Integer id, ArticleDTO articleDTO, List<MultipartFile> multipartFiles) throws IOException {
         Optional<Article> existingArticleOpt = articleRepository.findById(id);
 
@@ -114,6 +129,7 @@ public class ArticleService {
         }
     }
 
+    // 삭제
     public void deleteArticle(Integer id) {
         Optional<Article> existingArticleOpt = articleRepository.findById(id);
 
@@ -126,6 +142,7 @@ public class ArticleService {
         }
     }
 
+    // 디티오를 엔티티로 변환
     private ArticleDTO convertToDTO(Article article) {
         return new ArticleDTO(
                 article.getArticleImgName(),
@@ -141,7 +158,8 @@ public class ArticleService {
                 article.getArticleUpdateAt(),
                 article.isArticleStatus(),
                 article.getArticleView(),
-                article.getUserId()
+                // article.getUser().getUserid() // userId를 Long으로 설정
+                null // userId를 null로 설정
         );
     }
 }
