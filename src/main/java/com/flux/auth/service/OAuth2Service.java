@@ -64,7 +64,7 @@ public class OAuth2Service {
             User user = saveOrUpdateUser(email, name);
 
             logger.info("Naver user info: " + userId + ", " + email + ", " + name);
-            return generateJwtToken(userId, email, name);
+            return generateJwtToken(user.getUserId(), email, name); // 변경: userId 대신 user.getUserId() 사용
         } catch (HttpClientErrorException e) {
             logger.log(Level.SEVERE, "Failed to get user info from Naver", e);
             throw new RuntimeException("Failed to get user info from Naver", e);
@@ -106,12 +106,23 @@ public class OAuth2Service {
         }
     }
 
-    public ResponseEntity<Map<String, String>> buildResponse(String status, String jwtToken, String errorMessage) {
+    public ResponseEntity<Map<String, String>> buildResponse(String status, String jwtToken, User user) {
         Map<String, String> response = new HashMap<>();
         response.put("status", status);
         if (jwtToken != null) {
             response.put("jwtToken", jwtToken);
         }
+        if (user != null) {
+            response.put("userId", user.getUserId().toString()); // userId 추가
+            response.put("email", user.getEmail());
+            response.put("name", user.getUsername());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<Map<String, String>> buildErrorResponse(String status, String errorMessage) {
+        Map<String, String> response = new HashMap<>();
+        response.put("status", status);
         if (errorMessage != null) {
             response.put("message", errorMessage);
         }
@@ -132,7 +143,7 @@ public class OAuth2Service {
             User user = saveOrUpdateUser(email, name);
 
             logger.info("Google user info: " + userId + ", " + email + ", " + name);
-            return generateJwtToken(userId, email, name);
+            return generateJwtToken(user.getUserId(), email, name);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "An unexpected error occurred", e);
             throw new RuntimeException("An unexpected error occurred", e);
@@ -147,9 +158,9 @@ public class OAuth2Service {
         return userRepository.save(user);
     }
 
-    private String generateJwtToken(String userId, String email, String name) {
+    private String generateJwtToken(Integer userId, String email, String name) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("id", userId);
+        claims.put("userId", userId); // userId 추가
         claims.put("email", email);
         claims.put("name", name);
 
@@ -165,18 +176,5 @@ public class OAuth2Service {
     public User getUserFromJwtToken(String jwtToken) {
         String email = Jwts.parser().setSigningKey(tokenSecret).parseClaimsJws(jwtToken).getBody().getSubject();
         return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-    public ResponseEntity<Map<String, String>> buildResponse(String status, String jwtToken, User user) {
-        Map<String, String> response = new HashMap<>();
-        response.put("status", status);
-        if (jwtToken != null) {
-            response.put("jwtToken", jwtToken);
-        }
-        if (user != null) {
-            response.put("email", user.getEmail());
-            response.put("name", user.getUsername());
-        }
-        return ResponseEntity.ok(response);
     }
 }

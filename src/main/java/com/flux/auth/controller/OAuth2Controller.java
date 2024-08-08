@@ -28,7 +28,7 @@ public class OAuth2Controller {
             return oAuth2Service.buildResponse("success", jwtToken, user);
         } catch (RuntimeException e) {
             logger.log(Level.SEVERE, "Error during Naver login", e);
-            return oAuth2Service.buildResponse("error", null, e.getMessage());
+            return oAuth2Service.buildErrorResponse("error", e.getMessage());
         }
     }
 
@@ -41,7 +41,7 @@ public class OAuth2Controller {
             return oAuth2Service.buildResponse("success", jwtToken, user);
         } catch (RuntimeException e) {
             logger.log(Level.SEVERE, "Error during Google login", e);
-            return oAuth2Service.buildResponse("error", null, e.getMessage());
+            return oAuth2Service.buildErrorResponse("error", e.getMessage());
         }
     }
 
