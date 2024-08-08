@@ -13,7 +13,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long userid;
+    private Integer userId;
 
     @Column(name = "user_name")
     private String username;
@@ -28,8 +28,8 @@ public class User {
     public User() {
     }
 
-    public User(Long userid, String username, String email, Role role) {
-        this.userid = userid;
+    public User(Integer userId, String username, String email, Role role) {
+        this.userId = userId;
         this.username = username;
         this.email = email;
         this.role = role;
@@ -38,7 +38,7 @@ public class User {
     @Override
     public String toString() {
         return "UserEntity{" +
-                "id=" + userid +
+                "id=" + userId +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", role='" + role + '\'' +
