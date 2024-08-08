@@ -1,8 +1,10 @@
 package com.flux.user.model;
 
+import com.flux.article.model.Article;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
 
 @Getter
 @Setter
@@ -28,8 +30,8 @@ public class User {
     public User() {
     }
 
-    public User(Integer userId, String username, String email, Role role) {
-        this.userId = userId;
+    public User(Integer userid, String username, String email, Role role) {
+        this.userId = userid;
         this.username = username;
         this.email = email;
         this.role = role;
