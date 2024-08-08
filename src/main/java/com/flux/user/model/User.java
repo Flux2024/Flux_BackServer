@@ -1,8 +1,10 @@
 package com.flux.user.model;
 
+import com.flux.article.model.Article;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
 
 @Getter
 @Setter

@@ -76,8 +76,8 @@ public class ArticleController {
 
     // 상세 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ArticleDTO> getArticleById(@PathVariable("id") Integer id) {
-        return articleService.getArticleById(id)
+    public ResponseEntity<ArticleDTO> getArticleById(@PathVariable("id") Integer articleId) {
+        return articleService.getArticleById(articleId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
