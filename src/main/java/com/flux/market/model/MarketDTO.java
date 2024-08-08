@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,9 +16,9 @@ public class MarketDTO {
 
     private Integer marketId;
     private String marketName;
-    private String marketImgs;
+    private List<String> marketImgs; // 수정: String -> List<String>
     private int marketPrice;
-    private int marketMaxprice;
+    private int marketMaxPrice;
     private String marketCategory;
     private String marketContents;
     private MarketStatus marketOrderablestatus;
