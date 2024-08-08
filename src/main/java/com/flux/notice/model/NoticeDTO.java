@@ -1,15 +1,12 @@
 package com.flux.notice.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.time.LocalDateTime;
 
 public class NoticeDTO {
 
     private Integer userId;
-
     private String noticeTitle;
-
     private String noticeContent;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
