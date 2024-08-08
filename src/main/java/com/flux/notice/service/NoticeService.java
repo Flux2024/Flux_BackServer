@@ -24,8 +24,8 @@ public class NoticeService {
     }
 
     @Transactional
-    public Optional<Notice> getNoticeById(Long id) {
-        return noticeRepository.findById(id);
+    public Optional<Notice> getNoticeById(Integer noticeId) {
+        return noticeRepository.findById(noticeId);
     }
 
     @Transactional
@@ -45,11 +45,11 @@ public class NoticeService {
     }
 
     @Transactional
-    public void deleteNotice(Long id) {
-        if (!noticeRepository.existsById(id)) {
+    public void deleteNotice(Integer noticeId) {
+        if (!noticeRepository.existsById(noticeId)) {
             throw new IllegalArgumentException("Notice not found");
         }
-        noticeRepository.deleteById(id);
+        noticeRepository.deleteById(noticeId);
     }
 
     @Transactional

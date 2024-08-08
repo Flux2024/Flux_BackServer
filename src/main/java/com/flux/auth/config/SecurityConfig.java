@@ -31,10 +31,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/oauth2/**", "/login/**", "/api/**").permitAll()
-                        .requestMatchers("/manager/**").hasRole("ADMIN")
-                        .requestMatchers("/market/**", "/notice/**").hasRole("USER")
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
                         .loginProcessingUrl("/login")

@@ -11,10 +11,10 @@ public class Notice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notice_id", updatable = false, nullable = false)
-    private Long noticeId;
+    private Integer noticeId;
 
     @Column(name = "user_id")
-    private Long userId;
+    private Integer userId;
 
     @Column(name = "notice_title")
     private String noticeTitle;
@@ -31,7 +31,7 @@ public class Notice {
     public Notice() {
     }
 
-    public Notice(Long noticeId, Long userId, String noticeTitle, String noticeContent, LocalDateTime noticeCreateAt, LocalDateTime noticeUpdateAt) {
+    public Notice(Integer noticeId, Integer userId, String noticeTitle, String noticeContent, LocalDateTime noticeCreateAt, LocalDateTime noticeUpdateAt) {
         this.noticeId = noticeId;
         this.userId = userId;
         this.noticeTitle = noticeTitle;
@@ -40,19 +40,19 @@ public class Notice {
         this.noticeUpdateAt = noticeUpdateAt;
     }
 
-    public Long getNoticeId() {
+    public Integer getNoticeId() {
         return noticeId;
     }
 
-    public void setNoticeId(Long noticeId) {
+    public void setNoticeId(Integer noticeId) {
         this.noticeId = noticeId;
     }
 
-    public Long getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
