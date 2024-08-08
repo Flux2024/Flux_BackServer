@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -14,20 +14,22 @@ import java.util.List;
 @Setter
 public class MarketDTO {
 
-    private Integer marketId;
-    private String marketName;
-    private List<String> marketImgs; // 수정: String -> List<String>
-    private int marketPrice;
-    private int marketMaxPrice;
+    private Long marketId;
+    private Integer userId;
+    private String marketTitle;
+    private List<String> marketImgs;
+    private double marketPrice;
+    private double marketMaxPrice;
     private String marketCategory;
     private String marketContents;
-    private MarketStatus marketOrderablestatus;
-    private LocalDateTime marketCreateAt;
-    private LocalDateTime marketUpdateAt;
-    private LocalDateTime marketSelldate;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private boolean marketOrderableStatus;
+    private String userMail;
+    private String userName;
+    private String marketPeriod;
+    private OffsetDateTime marketCreateAt;
+    private OffsetDateTime marketUpdateAt;
+    private OffsetDateTime marketSellDate;
+    private OffsetDateTime startDate;
+    private OffsetDateTime endDate;
     private int marketView;
-
-    private Integer userId;
 }

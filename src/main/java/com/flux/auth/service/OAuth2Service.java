@@ -2,7 +2,7 @@ package com.flux.auth.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flux.auth.repository.UserRepository;
+import com.flux.auth.repository.AuthUserRepository;
 import com.flux.user.model.Role;
 import com.flux.user.model.User;
 import io.jsonwebtoken.Jwts;
@@ -39,9 +39,11 @@ public class OAuth2Service {
     private String tokenSecret;
 
     @Autowired
-    private UserRepository userRepository;
+    private AuthUserRepository userRepository;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private AuthUserRepository authUserRepository;
 
     public String createNaverJwtToken(String authorizationHeader) {
         logger.info("Creating Naver JWT token");
@@ -151,11 +153,11 @@ public class OAuth2Service {
     }
 
     private User saveOrUpdateUser(String email, String name) {
-        User user = userRepository.findByEmail(email)
+        User user = authUserRepository.findByEmail(email)
                 .orElse(new User(null, name, email, Role.USER));
         user.setEmail(email);
         user.setUsername(name);
-        return userRepository.save(user);
+        return authUserRepository.save(user);
     }
 
     private String generateJwtToken(Integer userId, String email, String name) {
@@ -175,6 +177,6 @@ public class OAuth2Service {
 
     public User getUserFromJwtToken(String jwtToken) {
         String email = Jwts.parser().setSigningKey(tokenSecret).parseClaimsJws(jwtToken).getBody().getSubject();
-        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        return authUserRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
     }
 }

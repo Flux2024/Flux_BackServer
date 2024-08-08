@@ -9,7 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Entity
@@ -23,14 +23,14 @@ public class Market {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "market_id", nullable = false)
-    private Integer marketId;
+    private Long marketId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "market_name", nullable = false)
-    private String marketName;
+    @Column(name = "market_title", nullable = false)
+    private String marketTitle;
 
     @ElementCollection
     @CollectionTable(name = "market_images", joinColumns = @JoinColumn(name = "market_id"))
@@ -38,10 +38,10 @@ public class Market {
     private List<String> marketImgs;
 
     @Column(name = "market_price", nullable = false)
-    private int marketPrice;
+    private double marketPrice;
 
-    @Column(name = "market_maxprice")
-    private int marketMaxPrice;
+    @Column(name = "market_max_price")
+    private double marketMaxPrice;
 
     @Column(name = "market_category", nullable = false)
     private String marketCategory;
@@ -50,29 +50,58 @@ public class Market {
     private String marketContents;
 
     @Column(name = "market_orderable_status", nullable = false)
-    private boolean marketOrderableStatus = true;
+    private boolean marketOrderableStatus;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "market_status", nullable = false)
-    private MarketStatus marketStatus = MarketStatus.AVAILABLE;
+    @Column(name = "user_mail")
+    private String userMail;
+
+    @Column(name = "user_name")
+    private String userName;
+
+    @Column(name = "market_period")
+    private String marketPeriod;
 
     @CreationTimestamp
-    @Column(name = "market_created_at")
-    private LocalDateTime marketCreatedAt;
+    @Column(name = "market_create_at", nullable = false, updatable = false)
+    private OffsetDateTime marketCreateAt;
 
     @UpdateTimestamp
-    @Column(name = "market_updated_at")
-    private LocalDateTime marketUpdatedAt;
+    @Column(name = "market_update_at")
+    private OffsetDateTime marketUpdateAt;
 
     @Column(name = "market_sell_date")
-    private LocalDateTime marketSellDate;
+    private OffsetDateTime marketSellDate;
 
     @Column(name = "start_date", nullable = false)
-    private LocalDateTime startDate;
+    private OffsetDateTime startDate;
 
     @Column(name = "end_date", nullable = false)
-    private LocalDateTime endDate;
+    private OffsetDateTime endDate;
 
     @Column(name = "market_view", nullable = false)
     private int marketView;
+
+    @Override
+    public String toString() {
+        return "Market{" +
+                "marketId=" + marketId +
+                ", user=" + user +
+                ", marketTitle='" + marketTitle + '\'' +
+                ", marketImgs=" + marketImgs +
+                ", marketPrice=" + marketPrice +
+                ", marketMaxPrice=" + marketMaxPrice +
+                ", marketCategory='" + marketCategory + '\'' +
+                ", marketContents='" + marketContents + '\'' +
+                ", marketOrderableStatus=" + marketOrderableStatus +
+                ", userMail='" + userMail + '\'' +
+                ", userName='" + userName + '\'' +
+                ", marketPeriod='" + marketPeriod + '\'' +
+                ", marketCreateAt=" + marketCreateAt +
+                ", marketUpdateAt=" + marketUpdateAt +
+                ", marketSellDate=" + marketSellDate +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", marketView=" + marketView +
+                '}';
+    }
 }

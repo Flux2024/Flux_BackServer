@@ -4,7 +4,7 @@ import com.flux.auth.dto.CustomOAuth2User;
 import com.flux.auth.dto.GoogleResponse;
 import com.flux.auth.dto.NaverResponse;
 import com.flux.auth.dto.OAuth2Response;
-import com.flux.auth.repository.UserRepository;
+import com.flux.auth.repository.AuthUserRepository;
 import com.flux.user.model.Role;
 import com.flux.user.model.User;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -17,10 +17,10 @@ import java.util.Optional;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
-    private final UserRepository userRepository;
+    private final AuthUserRepository authUserRepository;
 
-    public CustomOAuth2UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public CustomOAuth2UserService(AuthUserRepository authUserRepository) {
+        this.authUserRepository = authUserRepository;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String email = oAuth2Response.getEmail();
         String username = oAuth2Response.getName();  // name을 사용하여 사용자 이름 저장
 
-        Optional<User> userOptional = userRepository.findByEmail(email);
+        Optional<User> userOptional = authUserRepository.findByEmail(email);
         Role role;
 
         if (userOptional.isEmpty()) {
@@ -50,14 +50,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userEntity.setUsername(username);
             userEntity.setEmail(email);
             userEntity.setRole(Role.USER);
-            userRepository.save(userEntity);
+            authUserRepository.save(userEntity);
             role = Role.USER;
         } else {
             User existingUser = userOptional.get();
             existingUser.setUsername(username);
             existingUser.setEmail(email);
             role = existingUser.getRole();
-            userRepository.save(existingUser);
+            authUserRepository.save(existingUser);
         }
 
         return new CustomOAuth2User(oAuth2Response, role.name(), oAuth2User.getAttributes());

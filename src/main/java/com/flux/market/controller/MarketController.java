@@ -8,12 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/market")
@@ -34,7 +32,7 @@ public class MarketController {
     }
 
     @GetMapping("/{marketId}")
-    public ResponseEntity<MarketDTO> getMarketById(@PathVariable Integer marketId) {
+    public ResponseEntity<MarketDTO> getMarketById(@PathVariable Long marketId) {
         MarketDTO marketDTO = marketService.findById(marketId);
         return ResponseEntity.ok(marketDTO);
     }
@@ -46,13 +44,13 @@ public class MarketController {
     }
 
     @PutMapping("/{marketId}")
-    public ResponseEntity<MarketDTO> updateMarket(@PathVariable Integer marketId, @RequestBody MarketDTO marketDetails) {
+    public ResponseEntity<MarketDTO> updateMarket(@PathVariable Long marketId, @RequestBody MarketDTO marketDetails) {
         MarketDTO updatedMarketDTO = marketService.updateMarket(marketId, marketDetails);
         return ResponseEntity.ok(updatedMarketDTO);
     }
 
     @DeleteMapping("/{marketId}")
-    public ResponseEntity<Void> deleteMarket(@PathVariable Integer marketId) {
+    public ResponseEntity<Void> deleteMarket(@PathVariable Long marketId) {
         marketService.deleteById(marketId);
         return ResponseEntity.noContent().build();
     }
@@ -71,5 +69,4 @@ public class MarketController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }
