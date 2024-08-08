@@ -30,8 +30,8 @@ public class NoticeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Notice> getNoticeById(@PathVariable Long id) {
-        Optional<Notice> notice = noticeService.getNoticeById(id);
+    public ResponseEntity<Notice> getNoticeById(@PathVariable Integer noticeId) {
+        Optional<Notice> notice = noticeService.getNoticeById(noticeId);
         return notice.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -47,11 +47,11 @@ public class NoticeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Notice> updateNotice(@PathVariable Long id, @RequestBody NoticeDTO noticeDTO) {
+    public ResponseEntity<Notice> updateNotice(@PathVariable Integer noticeId, @RequestBody NoticeDTO noticeDTO) {
         try {
             // Convert DTO to Entity
             Notice notice = new Notice();
-            notice.setNoticeId(id);
+            notice.setNoticeId(noticeId);
             notice.setUserId(noticeDTO.getUserId());
             notice.setNoticeTitle(noticeDTO.getNoticeTitle());
             notice.setNoticeContent(noticeDTO.getNoticeContent());
@@ -69,9 +69,9 @@ public class NoticeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteNotice(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteNotice(@PathVariable Integer noticeId) {
         try {
-            noticeService.deleteNotice(id);
+            noticeService.deleteNotice(noticeId);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

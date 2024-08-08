@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public class NoticeDTO {
 
-    private Long userId;
+    private Integer userId;
 
     private String noticeTitle;
 
@@ -21,7 +21,7 @@ public class NoticeDTO {
     public NoticeDTO() {
     }
 
-    public NoticeDTO(Long userId, String noticeTitle, String noticeContent, LocalDateTime noticeCreateAt, LocalDateTime noticeUpdateAt) {
+    public NoticeDTO(Integer userId, String noticeTitle, String noticeContent, LocalDateTime noticeCreateAt, LocalDateTime noticeUpdateAt) {
         this.userId = userId;
         this.noticeTitle = noticeTitle;
         this.noticeContent = noticeContent;
@@ -29,11 +29,11 @@ public class NoticeDTO {
         this.noticeUpdateAt = noticeUpdateAt;
     }
 
-    public Long getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
