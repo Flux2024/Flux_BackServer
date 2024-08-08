@@ -3,9 +3,9 @@ package com.flux.article.service;
 import com.flux.article.model.Article;
 import com.flux.article.model.ArticleDTO;
 import com.flux.article.repository.ArticleRepository;
+import com.flux.user.model.User;
 import com.flux.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,17 +29,18 @@ public class ArticleService {
     public ArticleService(ArticleRepository articleRepository, ResourceLoader resourceLoader, UserService userService) {
         this.articleRepository = articleRepository;
         this.resourceLoader = resourceLoader;
-        this.userService = userService; // UserService 초기화
+        this.userService = userService;
     }
 
     // 등록
     public Article saveArticle(ArticleDTO articleDTO, List<MultipartFile> multipartFiles) throws IOException {
-        // User 정보를 가져오기 위해 userId 사용
-        // User user = userService.findUserById(articleDTO.getUserId());
-        // if (user == null) {
-        //     throw new IllegalArgumentException("유효하지 않은 사용자 ID입니다.");
-        // }
+        // User 정보 검증
+        User user = userService.findUserById(articleDTO.getUserId());
+        if (user == null) {
+            throw new RuntimeException("유효하지 않은 사용자입니다.");
+        }
 
+        // 파일 저장 로직
         if (multipartFiles != null && !multipartFiles.isEmpty()) {
             String filePath = setFilePath();
             for (MultipartFile file : multipartFiles) {
@@ -58,25 +59,18 @@ public class ArticleService {
         articleDTO.setArticleCreateAt(LocalDateTime.now());
         articleDTO.setArticleStatus(true);
 
-        // Article 엔티티 생성 및 user 설정
+        // Article 엔티티 생성 및 저장
         Article articleEntity = articleDTO.toEntity();
-        // articleEntity.setUser(user); // User 설정
         return articleRepository.save(articleEntity);
     }
 
     private String setFilePath() throws IOException {
-        Resource resource = resourceLoader.getResource("classpath:/img/multi");
-        String filePath;
-
-        if (!resource.exists()) {
-            String root = "src/main/resources/static/img/multi";
-            File file = new File(root);
-            file.mkdirs();
-            filePath = file.getAbsolutePath();
-        } else {
-            filePath = resourceLoader.getResource("classpath:/img/multi").getFile().getAbsolutePath();
+        String root = "src/main/resources/static/img/multi";
+        File file = new File(root);
+        if (!file.exists()) {
+            file.mkdirs();  // 디렉토리 생성
         }
-        return filePath;
+        return file.getAbsolutePath();
     }
 
     // 전체 조회
@@ -100,6 +94,7 @@ public class ArticleService {
         if (existingArticleOpt.isPresent()) {
             Article existingArticle = existingArticleOpt.get();
 
+            // 파일 처리
             if (multipartFiles != null && !multipartFiles.isEmpty()) {
                 String filePath = setFilePath();
                 for (MultipartFile file : multipartFiles) {
@@ -115,6 +110,7 @@ public class ArticleService {
                 }
             }
 
+            // 기존 아티클 업데이트
             existingArticle.setArticleImgDescription(articleDTO.getArticleImgDescription());
             existingArticle.setArticleTitle(articleDTO.getArticleTitle());
             existingArticle.setArticleAuthor(articleDTO.getArticleAuthor());
@@ -142,12 +138,14 @@ public class ArticleService {
         }
     }
 
-    // 디티오를 엔티티로 변환
+    // 엔티티를 DTO로 변환
     private ArticleDTO convertToDTO(Article article) {
+        String imageUrl = article.getSaveImgName(); // 이미지의 전체 경로 생성
+
         return new ArticleDTO(
                 article.getArticleImgName(),
                 article.getSaveImgName(),
-                article.getArticleImgPath(),
+                imageUrl, // 기존 필드 대신 이미지 URL 필드 설정
                 article.getArticleImgDescription(),
                 article.getArticleId(),
                 article.getArticleTitle(),
@@ -157,9 +155,8 @@ public class ArticleService {
                 article.getArticleCreateAt(),
                 article.getArticleUpdateAt(),
                 article.isArticleStatus(),
-                article.getArticleView()
-                // article.getUser().getUserid() // userId를 Long으로 설정
-                // userId를 null로 설정
+                article.getArticleView(),
+                article.getUser() != null ? article.getUser().getUserId() : null
         );
     }
 }

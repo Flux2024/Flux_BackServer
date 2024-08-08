@@ -1,5 +1,6 @@
 package com.flux.article.model;
 
+import com.flux.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,6 +49,10 @@ public class Article {
 
     @Column(name = "article_view", nullable = false)
     private int articleView;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id") // 외래 키를 user_id로 설정
+    private User user;
 
     // 이미지 등록용 엔티티 필드
     @Column(name = "article_img_name")

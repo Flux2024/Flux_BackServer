@@ -28,8 +28,8 @@ public class User {
     public User() {
     }
 
-    public User(Integer userId, String username, String email, Role role) {
-        this.userId = userId;
+    public User(Integer userid, String username, String email, Role role) {
+        this.userId = userid;
         this.username = username;
         this.email = email;
         this.role = role;
