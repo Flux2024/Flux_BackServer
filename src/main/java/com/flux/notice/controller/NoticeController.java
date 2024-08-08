@@ -65,9 +65,10 @@ public class NoticeController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdNotice);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
 
     @Operation(summary = "공지사항 수정", description = "ID를 기반으로 특정 공지사항을 수정합니다.")
     @ApiResponses(value = {
