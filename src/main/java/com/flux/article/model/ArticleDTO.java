@@ -1,5 +1,6 @@
 package com.flux.article.model;
 
+import com.flux.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 public class ArticleDTO {
 
-    // 이미지 등록용 dto
+    // 이미지 등록용 DTO
     private String articleImgName; // 파일의 이름
     private String saveImgName; // 확장자 이름
     private String articleImgPath;
@@ -28,9 +29,9 @@ public class ArticleDTO {
     private boolean articleStatus; // 수정 삭제용
     private int articleView;
 
-//    private Long userId; // User 엔티티의 ID (Long 타입으로 변경)
+    private Integer userId; // User 엔티티의 userId 필드를 Integer로 설정
 
-    // toEntity 메서드 수정
+    // toEntity 메서드
     public Article toEntity() {
         Article article = new Article();
         article.setArticleId(this.articleId);
@@ -47,12 +48,12 @@ public class ArticleDTO {
         article.setArticleStatus(this.articleStatus);
         article.setArticleView(this.articleView);
 
-//        // User 엔티티 설정
-//        if (this.userId != null) {
-//            User user = new User();
-//            user.setUserid(this.userId); // userId를 Long 타입으로 설정
-//            article.setUser(user); // Article 엔티티의 User 필드 설정
-//        }
+        // User 엔티티 설정
+        if (this.userId != null) {
+            User user = new User();
+            user.setUserId(this.userId); // @Setter 어노테이션을 통해 자동 생성된 setter 사용
+            article.setUser(user); // Article 엔티티의 User 필드 설정
+        }
 
         return article;
     }

@@ -3,6 +3,7 @@ package com.flux.article.controller;
 import com.flux.article.model.Article;
 import com.flux.article.model.ArticleDTO;
 import com.flux.article.service.ArticleService;
+import com.flux.user.model.User;
 import com.flux.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,12 +22,12 @@ import java.util.Map;
 public class ArticleController {
 
     private final ArticleService articleService;
-    private final UserService userService; // UserService 추가
+    private final UserService userService;
 
     @Autowired
     public ArticleController(ArticleService articleService, UserService userService) {
         this.articleService = articleService;
-        this.userService = userService; // UserService 초기화
+        this.userService = userService;
     }
 
     // 아티클 등록 (이미지 파일 포함)
@@ -36,41 +37,23 @@ public class ArticleController {
             @RequestParam("articleTitle") String articleTitle,
             @RequestParam("articleAuthor") String articleAuthor,
             @RequestParam("articleContents") String articleContents,
-            // @RequestParam(value = "userId", required = false) String userIdStr, // String으로 받고
+            @RequestParam("userId") Integer userId, // userId를 Integer로 변경
             @RequestPart(name = "files", required = false) List<MultipartFile> multipartFiles) {
 
-        // System.out.println("전달받은 userId: " + userIdStr); // 로그로 userId 확인
-
-        // Long userId = null;
-        // if (userIdStr != null && !userIdStr.isEmpty()) {
-        //     try {
-        //         userId = Long.parseLong(userIdStr);
-        //     } catch (NumberFormatException e) {
-        //         Map<String, Object> response = new HashMap<>();
-        //         response.put("message", "유효하지 않은 사용자 ID입니다.");
-        //         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        //     }
-        // }
-
-        // if (userId == null) {
-        //     Map<String, Object> response = new HashMap<>();
-        //     response.put("message", "유효하지 않은 사용자 ID입니다.");
-        //     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        // }
-
-        // User user = userService.findUserById(userId);
-        // if (user == null) {
-        //     Map<String, Object> response = new HashMap<>();
-        //     response.put("message", "유효하지 않은 사용자 ID입니다.");
-        //     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        // }
+        // User 정보를 UserService로부터 가져오기
+        User user = userService.findUserById(userId); // UserService에서 findUserById 메서드를 호출
+        if (user == null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "유효하지 않은 사용자입니다.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
 
         ArticleDTO articleDTO = new ArticleDTO();
         articleDTO.setArticleCategory(articleCategory);
         articleDTO.setArticleTitle(articleTitle);
         articleDTO.setArticleAuthor(articleAuthor);
         articleDTO.setArticleContents(articleContents);
-        // articleDTO.setUserId(userId); // Long 타입의 userId 설정
+        articleDTO.setUserId(user.getUserId()); // 사용자 ID 설정
 
         Map<String, Object> response = new HashMap<>();
         try {
@@ -124,7 +107,6 @@ public class ArticleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> deleteArticle(@PathVariable("id") Integer id) {
         Map<String, String> response = new HashMap<>();
-
         try {
             articleService.deleteArticle(id);
             response.put("message", "아티클이 성공적으로 삭제되었습니다.");
