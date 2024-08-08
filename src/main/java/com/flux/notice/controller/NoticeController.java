@@ -29,13 +29,13 @@ public class NoticeController {
         return ResponseEntity.ok(notices);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{noticeId}")
     public ResponseEntity<Notice> getNoticeById(@PathVariable Integer noticeId) {
         Optional<Notice> notice = noticeService.getNoticeById(noticeId);
         return notice.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<Notice> createNotice(@RequestBody NoticeDTO noticeDTO) {
         try {
             Notice createdNotice = noticeService.save(noticeDTO);
@@ -46,7 +46,7 @@ public class NoticeController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{noticeId}")
     public ResponseEntity<Notice> updateNotice(@PathVariable Integer noticeId, @RequestBody NoticeDTO noticeDTO) {
         try {
             // Convert DTO to Entity
@@ -68,7 +68,7 @@ public class NoticeController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{noticeId}")
     public ResponseEntity<Void> deleteNotice(@PathVariable Integer noticeId) {
         try {
             noticeService.deleteNotice(noticeId);
