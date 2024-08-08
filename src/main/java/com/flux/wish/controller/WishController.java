@@ -19,7 +19,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/wishes")
 @CrossOrigin(origins = "http://localhost:8000")
-@Tag(name = "Wish Controller", description = "찜목록 관련 컨트롤러")
+@Tag(name = "Wish API", description = "찜목록 관련 컨트롤러")
 public class WishController {
 
     private final WishService wishService;
@@ -42,15 +42,15 @@ public class WishController {
 
     @Operation(summary = "찜목록 상세 조회", description = "ID를 기반으로 특정 찜목록의 상세 정보를 조회합니다.",
             parameters = {
-                    @Parameter(name = "wishId", description = "조회할 찜목록의 ID", example = "1")
+                    @Parameter(name = "id", description = "조회할 찜목록의 ID", example = "1")
             })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적으로 조회되었습니다."),
             @ApiResponse(responseCode = "404", description = "해당 ID를 가진 찜목록을 찾을 수 없습니다.")
     })
-    @GetMapping("/{wishId}")
-    public ResponseEntity<Wish> getWish(@PathVariable Integer wishId) {
-        Optional<Wish> wishlist = wishService.getWishById(wishId);
+    @GetMapping("/{id}")
+    public ResponseEntity<Wish> getWish(@PathVariable Integer id) {
+        Optional<Wish> wishlist = wishService.getWishById(id);
         return wishlist.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -71,15 +71,15 @@ public class WishController {
 
     @Operation(summary = "찜목록 삭제", description = "ID를 기반으로 특정 찜목록을 삭제합니다.",
             parameters = {
-                    @Parameter(name = "wishId", description = "삭제할 찜목록의 ID", example = "1")
+                    @Parameter(name = "id", description = "삭제할 찜목록의 ID", example = "1")
             })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "성공적으로 삭제되었습니다."),
             @ApiResponse(responseCode = "404", description = "해당 ID를 가진 찜목록을 찾을 수 없습니다.")
     })
-    @DeleteMapping("/{wishId}")
-    public ResponseEntity<Void> deleteWish(@PathVariable Integer wishId) {
-        boolean isDeleted = wishService.deleteWish(wishId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteWish(@PathVariable Integer id) {
+        boolean isDeleted = wishService.deleteWish(id);
         if (isDeleted) {
             return ResponseEntity.noContent().build();
         } else {
