@@ -109,4 +109,11 @@ public class CommentController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @Operation(summary = "댓글에 추천을 하는 메서드", description = "특정 ID의 댓글을 추천합니다.")
+    @PutMapping("/{id}/like")
+    public ResponseEntity<Comment> likeComment(@PathVariable Integer id) {
+        Comment updatedComment = commentService.likeComment(id);
+        return ResponseEntity.ok(updatedComment);
+    }
 }
