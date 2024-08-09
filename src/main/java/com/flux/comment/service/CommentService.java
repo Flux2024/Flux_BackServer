@@ -2,6 +2,7 @@ package com.flux.comment.service;
 
 import com.flux.comment.model.Comment;
 import com.flux.comment.repository.CommentRepository;
+import com.flux.global.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -90,5 +91,13 @@ public class CommentService {
                 throw new IllegalArgumentException("중복되는 댓글이 존재합니다.");
             }
         }
+    }
+
+    // 댓글추천 관련 로직
+    public Comment likeComment(Integer id) {
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
+        comment.increaseLikeCount();
+        return commentRepository.save(comment);
     }
 }

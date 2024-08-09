@@ -34,9 +34,16 @@ public class Comment {
     @Column(name = "comment_update_at")
     private LocalDateTime commentupdateAt;
 
+    @Column(name = "comment_like_count")
+    private int likeCount = 0;
+
     @Column(name = "article_id", nullable = false)
     private Integer articleId;
 
     @Column(name = "user_id", nullable = false)
     private Integer userId;
+
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
 }
