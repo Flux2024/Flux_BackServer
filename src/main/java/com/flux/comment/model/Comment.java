@@ -43,6 +43,9 @@ public class Comment {
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 
+    @Column(name = "user_name", nullable = false)
+    private  String userName;
+
     public void increaseLikeCount() {
         this.likeCount++;
     }

@@ -33,26 +33,18 @@ public class ArticleController {
     // 아티클 등록 (이미지 파일 포함)
     @PostMapping("/articlepost")
     public ResponseEntity<Map<String, Object>> createArticleWithFiles(
-            @RequestParam("articleCategory") String articleCategory,
-            @RequestParam("articleTitle") String articleTitle,
-            @RequestParam("articleAuthor") String articleAuthor,
-            @RequestParam("articleContents") String articleContents,
-            @RequestParam("userId") Integer userId, // userId를 Integer로 변경
+            @ModelAttribute ArticleDTO articleDTO,  // DTO를 사용하여 데이터 받기
             @RequestPart(name = "files", required = false) List<MultipartFile> multipartFiles) {
 
         // User 정보를 UserService로부터 가져오기
-        User user = userService.findUserById(userId); // UserService에서 findUserById 메서드를 호출
+        User user = userService.findUserById(articleDTO.getUserId()); // DTO에서 userId를 가져오기
+
         if (user == null) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "유효하지 않은 사용자입니다.");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
-        ArticleDTO articleDTO = new ArticleDTO();
-        articleDTO.setArticleCategory(articleCategory);
-        articleDTO.setArticleTitle(articleTitle);
-        articleDTO.setArticleAuthor(articleAuthor);
-        articleDTO.setArticleContents(articleContents);
         articleDTO.setUserId(user.getUserId()); // 사용자 ID 설정
 
         Map<String, Object> response = new HashMap<>();
@@ -60,10 +52,10 @@ public class ArticleController {
             Article savedArticle = articleService.saveArticle(articleDTO, multipartFiles);
             response.put("message", "아티클이 성공적으로 등록되었습니다.");
             response.put("article", savedArticle);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+            return ResponseEntity.ok(response);
         } catch (IOException e) {
             response.put("message", "이미지 업로드 중 오류가 발생했습니다: " + e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 

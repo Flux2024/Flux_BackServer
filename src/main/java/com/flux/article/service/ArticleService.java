@@ -42,10 +42,10 @@ public class ArticleService {
 
         // 파일 저장 로직
         if (multipartFiles != null && !multipartFiles.isEmpty()) {
-            String filePath = setFilePath();
+            String filePath = setFilePath(); // 파일 저장 경로 설정
             for (MultipartFile file : multipartFiles) {
                 String originFileName = file.getOriginalFilename();
-                String ext = originFileName.substring(originFileName.lastIndexOf("."));
+                String ext = originFileName != null ? originFileName.substring(originFileName.lastIndexOf(".")) : "";
                 String savedName = UUID.randomUUID().toString().replace("-", "") + ext;
 
                 file.transferTo(new File(filePath + "/" + savedName));
@@ -56,12 +56,28 @@ public class ArticleService {
             }
         }
 
+        // 기본 값 설정
         articleDTO.setArticleCreateAt(LocalDateTime.now());
         articleDTO.setArticleStatus(true);
 
-        // Article 엔티티 생성 및 저장
-        Article articleEntity = articleDTO.toEntity();
-        return articleRepository.save(articleEntity);
+        // Article 엔티티 생성 및 필드 매핑
+        Article articleEntity = new Article();
+        articleEntity.setArticleImgName(articleDTO.getArticleImgName());
+        articleEntity.setSaveImgName(articleDTO.getSaveImgName());
+        articleEntity.setArticleImgPath(articleDTO.getArticleImgPath());
+        articleEntity.setArticleImgDescription(articleDTO.getArticleImgDescription());
+        articleEntity.setArticleId(articleDTO.getArticleId());
+        articleEntity.setArticleTitle(articleDTO.getArticleTitle());
+        articleEntity.setArticleAuthor(articleDTO.getArticleAuthor());
+        articleEntity.setArticleCategory(articleDTO.getArticleCategory());
+        articleEntity.setArticleContents(articleDTO.getArticleContents());
+        articleEntity.setArticleCreateAt(articleDTO.getArticleCreateAt());
+        articleEntity.setArticleUpdateAt(articleDTO.getArticleUpdateAt());
+        articleEntity.setArticleStatus(articleDTO.isArticleStatus());
+        articleEntity.setArticleView(articleDTO.getArticleView());
+        articleEntity.setUser(user); // User 엔티티 설정
+
+        return articleRepository.save(articleEntity); // 엔티티 저장
     }
 
     private String setFilePath() throws IOException {
