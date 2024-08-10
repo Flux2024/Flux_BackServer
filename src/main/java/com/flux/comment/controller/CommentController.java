@@ -56,16 +56,23 @@ public class CommentController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Comment.class))}),
             @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. 필수 필드가 누락되었습니다.", content = @Content)
     })
-    @PostMapping
-    public ResponseEntity<Comment> createComment(@RequestBody Comment comment) {
-        if (comment.getArticleId() == null || comment.getArticleId() <= 0 ||
-                comment.getUserId() == null || comment.getUserId() <= 0 ||
-                comment.getCommentContents() == null || comment.getCommentContents().trim().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    @PostMapping("/{articleId}")
+    public ResponseEntity<Comment> createComment(@PathVariable Integer articleId, @RequestBody Comment comment) {
+        try {
+            if (articleId <= 0 ||
+                    comment.getUserId() == null || comment.getUserId() <= 0 ||
+                    comment.getCommentContents() == null || comment.getCommentContents().trim().isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
 
-        Comment createdComment = commentService.createComment(comment);
-        return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
+            comment.setArticleId(articleId);
+            Comment createdComment = commentService.createComment(comment);
+            return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // 유효성 검증 실패
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // 서버 내부 오류
+        }
     }
 
     @Operation(summary = "댓글을 수정합니다.", description = "기존의 댓글을 수정합니다.")
@@ -75,14 +82,15 @@ public class CommentController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. 필수 필드가 누락되었거나 ID가 유효하지 않습니다.", content = @Content),
             @ApiResponse(responseCode = "404", description = "해당 ID의 댓글을 찾을 수 없습니다.", content = @Content)
     })
-    @PutMapping("/{id}")
-    public ResponseEntity<Comment> updateComment(@PathVariable Integer id, @RequestBody Comment updatedComment) {
-        if (id <= 0 || updatedComment.getCommentContents() == null ||
-                updatedComment.getCommentContents().trim().isEmpty()) {
+    @PutMapping("/{commentId}")
+    public ResponseEntity<Comment> updateComment(@PathVariable Integer commentId, @RequestBody Comment updatedComment) {
+        if (commentId <= 0 || updatedComment.getCommentContents() == null ||
+                updatedComment.getCommentContents().trim().isEmpty() ||
+                updatedComment.getArticleId() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Optional<Comment> existingComment = Optional.ofNullable(commentService.updateComment(id, updatedComment));
+        Optional<Comment> existingComment = Optional.ofNullable(commentService.updateComment(commentId, updatedComment));
         if (existingComment.isPresent()) {
             return new ResponseEntity<>(existingComment.get(), HttpStatus.OK);
         } else {

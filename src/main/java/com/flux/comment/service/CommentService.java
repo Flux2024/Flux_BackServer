@@ -33,6 +33,8 @@ public class CommentService {
     public Comment createComment(Comment comment) {
         validateComment(comment);
         checkForDuplicateComment(comment);
+
+        // Save the comment
         return commentRepository.save(comment);
     }
 
