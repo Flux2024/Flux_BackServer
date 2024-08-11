@@ -8,6 +8,7 @@ import com.flux.user.model.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +31,7 @@ public class MarketService {
     }
 
     // 모든 Market을 MarketDTO 리스트로 반환
+    @Transactional
     public List<MarketDTO> findAll() {
         return marketRepository.findAll()
                 .stream()
@@ -38,6 +40,7 @@ public class MarketService {
     }
 
     // ID로 Market을 찾아 MarketDTO로 반환
+    @Transactional
     public MarketDTO findById(Integer marketId) {
         Market market = marketRepository.findById(marketId)
                 .orElseThrow(() -> new RuntimeException("해당 상품이 없습니다."));
@@ -45,6 +48,7 @@ public class MarketService {
     }
 
     // MarketDTO를 받아서 저장한 후 MarketDTO로 반환
+    @Transactional
     public MarketDTO save(MarketDTO marketDTO) {
         Market market = new Market();
         BeanUtils.copyProperties(marketDTO, market);
@@ -61,6 +65,7 @@ public class MarketService {
     }
 
     // ID로 Market을 업데이트하고 MarketDTO로 반환
+    @Transactional
     public MarketDTO updateMarket(Integer marketId, MarketDTO marketDetails) {
         Market market = marketRepository.findById(marketId)
                 .orElseThrow(() -> new RuntimeException("해당 상품이 없습니다."));
@@ -77,6 +82,7 @@ public class MarketService {
     }
 
     // ID로 Market 삭제
+    @Transactional
     public void deleteById(Integer marketId) {
         if (!marketRepository.existsById(marketId)) {
             throw new RuntimeException("해당 상품이 없습니다.");
