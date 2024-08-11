@@ -75,4 +75,11 @@ public class Market {
 
     @Column(name = "market_view", nullable = false)
     private int marketView;
+
+    @Column(name = "current_highest_bid")
+    private Integer currentHighestBid; // 현재 최고 입찰가를 저장하는 필드
+
+    @Column(name = "sold")
+    private boolean sold; // 판매 여부
+
 }
