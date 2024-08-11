@@ -8,6 +8,7 @@ import com.flux.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -33,6 +34,7 @@ public class ArticleService {
     }
 
     // 등록
+    @Transactional
     public Article saveArticle(ArticleDTO articleDTO, List<MultipartFile> multipartFiles) throws IOException {
         // User 정보 검증
         User user = userService.findUserById(articleDTO.getUserId());
@@ -90,6 +92,7 @@ public class ArticleService {
     }
 
     // 전체 조회
+    @Transactional
     public List<ArticleDTO> getAllArticles() {
         return articleRepository.findByArticleStatusTrue().stream()
                 .map(this::convertToDTO)
@@ -97,6 +100,7 @@ public class ArticleService {
     }
 
     // 상세 조회
+    @Transactional
     public Optional<ArticleDTO> getArticleById(Integer articleId) {
         return articleRepository.findById(articleId)
                 .filter(Article::isArticleStatus)
@@ -104,6 +108,7 @@ public class ArticleService {
     }
 
     // 수정
+    @Transactional
     public ArticleDTO updateArticle(Integer id, ArticleDTO articleDTO, List<MultipartFile> multipartFiles) throws IOException {
         Optional<Article> existingArticleOpt = articleRepository.findById(id);
 
@@ -142,6 +147,7 @@ public class ArticleService {
     }
 
     // 삭제
+    @Transactional
     public void deleteArticle(Integer id) {
         Optional<Article> existingArticleOpt = articleRepository.findById(id);
 
