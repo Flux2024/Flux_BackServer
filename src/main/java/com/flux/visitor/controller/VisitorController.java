@@ -16,19 +16,28 @@ public class VisitorController {
     @Autowired
     private VisitorService visitorService;
 
+    // 방문자 수를 증가시키는 API
+    @PostMapping
+    public ResponseEntity<Void> trackVisitor() {
+        visitorService.trackVisit();
+        return ResponseEntity.ok().build();
+    }
+
+    // 오늘의 방문자 수를 반환하는 API
     @GetMapping("/daily")
     public ResponseEntity<Integer> getTodayVisitorCount() {
         int count = visitorService.getTodayVisitorCount();
         return ResponseEntity.ok(count);
     }
 
+    // 월별 방문자 수를 반환하는 API
     @GetMapping("/monthly")
     public ResponseEntity<List<Integer>> getMonthlyVisitorCounts() {
         List<Integer> counts = visitorService.getMonthlyVisitorCounts();
         return ResponseEntity.ok(counts);
     }
 
-    // /daily-all 엔드포인트 추가
+    // 일일 방문자 전체 데이터를 반환하는 API
     @GetMapping("/daily-all")
     public ResponseEntity<List<Visitor>> getAllDailyVisitorCounts() {
         List<Visitor> visitors = visitorService.getAllDailyVisitorCounts();

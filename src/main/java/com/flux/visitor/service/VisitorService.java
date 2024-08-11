@@ -17,21 +17,39 @@ public class VisitorService {
     @Autowired
     private VisitorRepository visitorRepository;
 
-    public Visitor saveVisitorCount(int count) {
+    // 방문자 수를 수동으로 설정하는 메서드
+    public Visitor saveVisitorCount(Long count) {
         LocalDate today = LocalDate.now();
         Visitor visitor = visitorRepository.findByVisitDate(today)
-                .orElseGet(() -> new Visitor(today, 0));
-        visitor.setCount(count);
+                .orElseGet(() -> Visitor.builder()
+                        .visitDate(today)
+                        .visitCount(0L)
+                        .build());
+        visitor.setVisitCount(count);
         return visitorRepository.save(visitor);
     }
 
+    // 방문자가 사이트를 방문할 때마다 카운트를 증가시키는 메서드
+    public void trackVisit() {  // 메서드명 변경: incrementVisitorCount -> trackVisit
+        LocalDate today = LocalDate.now();
+        Visitor visitor = visitorRepository.findByVisitDate(today)
+                .orElseGet(() -> Visitor.builder()
+                        .visitDate(today)
+                        .visitCount(0L)
+                        .build());
+        visitor.setVisitCount(visitor.getVisitCount() + 1);
+        visitorRepository.save(visitor);
+    }
+
+    // 오늘 방문자 수를 반환하는 메서드
     public int getTodayVisitorCount() {
         LocalDate today = LocalDate.now();
         return visitorRepository.findByVisitDate(today)
-                .map(Visitor::getCount)
+                .map(visitor -> visitor.getVisitCount().intValue())
                 .orElse(0);
     }
 
+    // 월별 방문자 수를 반환하는 메서드
     public List<Integer> getMonthlyVisitorCounts() {
         YearMonth currentMonth = YearMonth.now();
         int daysInMonth = currentMonth.lengthOfMonth();
@@ -41,7 +59,7 @@ public class VisitorService {
             LocalDate date = currentMonth.atDay(day);
             dailyCounts.add(
                     visitorRepository.findByVisitDate(date)
-                            .map(Visitor::getCount)
+                            .map(visitor -> visitor.getVisitCount().intValue())
                             .orElse(0)
             );
         });
@@ -49,8 +67,8 @@ public class VisitorService {
         return dailyCounts;
     }
 
-    // 모든 날짜의 방문자 데이터를 반환하는 메서드 추가
+    // 모든 일별 방문자 데이터를 반환하는 메서드
     public List<Visitor> getAllDailyVisitorCounts() {
-        return visitorRepository.findAll();  // 모든 Visitor 엔티티를 반환
+        return visitorRepository.findAll();
     }
 }
