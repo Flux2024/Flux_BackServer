@@ -1,10 +1,16 @@
 package com.flux.wish.service;
 
+import com.flux.market.model.Market;
+import com.flux.market.repository.MarketRepository;
+import com.flux.user.model.User;
+import com.flux.auth.repository.UserRepository;
 import com.flux.wish.model.Wish;
 import com.flux.wish.repository.WishRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,55 +18,67 @@ import java.util.Optional;
 @Service
 public class WishService {
 
-    private final WishRepository wishRepository;
+    @Autowired
+    private WishRepository wishRepository;
 
     @Autowired
-    public WishService(WishRepository wishRepository) {
-        this.wishRepository = wishRepository;
-    }
+    private MarketRepository marketRepository;
 
-    /**
-     * 모든 찜목록을 조회합니다.
-     * @return 모든 Wish 목록
-     */
-    @Transactional
-    public List<Wish> getAllWish() {
-        return wishRepository.findAll();
-    }
+    @Autowired
+    private UserRepository userRepository;
 
-    /**
-     * 특정 ID의 찜목록을 조회합니다.
-     * @param id 찜목록 ID
-     * @return 찜목록이 존재하면 해당 Wish, 그렇지 않으면 Optional.empty()
-     */
-    @Transactional
-    public Optional<Wish> getWishById(Integer id) {
-        return wishRepository.findById(id);
-    }
+    public void addWish(Integer marketId, Integer userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        Optional<Market> marketOpt = marketRepository.findById(marketId);
 
-    /**
-     * 새로운 찜목록을 생성합니다.
-     * @param wish 생성할 Wish 객체
-     * @return 생성된 Wish 객체
-     */
-    @Transactional
-    public Wish createWish(Wish wish) {
-        return wishRepository.save(wish);
-    }
-
-    /**
-     * 특정 ID의 찜목록을 삭제합니다.
-     * @param id 삭제할 Wish의 ID
-     * @return 삭제 성공 여부
-     */
-    @Transactional
-    public boolean deleteWish(Integer id) {
-        Optional<Wish> existingWish = wishRepository.findById(id);
-        if (existingWish.isPresent()) {
-            wishRepository.deleteById(id);
-            return true;
+        if (userOpt.isPresent() && marketOpt.isPresent()) {
+            Wish wish = new Wish();
+            wish.setMarket(marketOpt.get());
+            wish.setUser(userOpt.get());
+            wishRepository.save(wish);
         } else {
-            return false;
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User or Market not found");
         }
+    }
+
+    public void removeWish(Integer marketId, Integer userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        Optional<Market> marketOpt = marketRepository.findById(marketId);
+
+        if (userOpt.isPresent() && marketOpt.isPresent()) {
+            Wish wish = wishRepository.findByMarketAndUser(marketOpt.get(), userOpt.get());
+            if (wish != null) {
+                wishRepository.delete(wish);
+            } else {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Wish not found");
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User or Market not found");
+        }
+    }
+
+    public void removeWishById(Integer wishId) {
+        try {
+            Optional<Wish> wish = wishRepository.findById(wishId);
+            if (wish.isEmpty()) {
+                throw new EntityNotFoundException("Wish not found with id: " + wishId);
+            }
+            wishRepository.delete(wish.get());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error deleting wish item by id", e);
+        }
+    }
+
+    public List<Wish> getWishedMarketsByUserId(Integer userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isPresent()) {
+            return wishRepository.findByUser(userOpt.get());
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+    }
+
+    public List<Wish> getAllWishes() {
+        return wishRepository.findAll();
     }
 }
