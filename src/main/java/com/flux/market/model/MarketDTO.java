@@ -16,6 +16,7 @@ public class MarketDTO {
 
     private Integer marketId;
     private String marketName;
+    private String auctionDuration;
     private List<String> marketImgs; // 수정: String -> List<String>
     private int marketPrice;
     private int marketMaxPrice;

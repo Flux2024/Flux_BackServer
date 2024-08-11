@@ -1,61 +1,62 @@
-package com.flux.wish.service;
+package com.flux.market.service;
 
-import com.flux.wish.model.Wish;
-import com.flux.wish.repository.WishRepository;
+import com.flux.auth.repository.UserRepository;
+import com.flux.market.model.Market;
+import com.flux.market.repository.MarketRepository;
+import com.flux.user.model.User;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class WishService {
-
-    private final WishRepository wishRepository;
+public class WishListService {
 
     @Autowired
-    public WishService(WishRepository wishRepository) {
-        this.wishRepository = wishRepository;
-    }
+    private WishListRepository wishListRepository;
 
-    /**
-     * 모든 찜목록을 조회합니다.
-     * @return 모든 Wish 목록
-     */
-    public List<Wish> getAllWish() {
-        return wishRepository.findAll();
-    }
+    @Autowired
+    private MarketRepository marketRepository;
 
-    /**
-     * 특정 ID의 찜목록을 조회합니다.
-     * @param id 찜목록 ID
-     * @return 찜목록이 존재하면 해당 Wish, 그렇지 않으면 Optional.empty()
-     */
-    public Optional<Wish> getWishById(Integer id) {
-        return wishRepository.findById(id);
-    }
+    @Autowired
+    private UserRepository userRepository;
 
-    /**
-     * 새로운 찜목록을 생성합니다.
-     * @param wish 생성할 Wish 객체
-     * @return 생성된 Wish 객체
-     */
-    public Wish createWish(Wish wish) {
-        return wishRepository.save(wish);
-    }
+    public void addWish(Integer marketId, Integer userId) {
+        Market market = marketRepository.findById(marketId)
+                .orElseThrow(() -> new EntityNotFoundException("Market not found with id: " + marketId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
 
-    /**
-     * 특정 ID의 찜목록을 삭제합니다.
-     * @param id 삭제할 Wish의 ID
-     * @return 삭제 성공 여부
-     */
-    public boolean deleteWish(Integer id) {
-        Optional<Wish> existingWish = wishRepository.findById(id);
-        if (existingWish.isPresent()) {
-            wishRepository.deleteById(id);
-            return true;
-        } else {
-            return false;
+        WishListItem item = new WishListItem();
+        item.setMarket(market);
+        item.setUser(user);
+
+        try {
+            wishListRepository.save(item);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not save wish list item", e);
         }
+    }
+
+    public void removeWish(Integer marketId, Integer userId) {
+        Market market = marketRepository.findById(marketId)
+                .orElseThrow(() -> new EntityNotFoundException("Market not found with id: " + marketId));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+
+        WishListItem item = wishListRepository.findByUserAndMarket(user, market)
+                .orElseThrow(() -> new EntityNotFoundException("WishListItem not found for marketId: " + marketId + " and userId: " + userId));
+        wishListRepository.delete(item);
+    }
+
+    public List<WishListItem> getWishedMarkets(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+        return wishListRepository.findByUser(user);
     }
 }

@@ -1,26 +1,36 @@
 package com.flux.wish.model;
 
+import com.flux.market.model.Market;
+import com.flux.user.model.User;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "wish")
-@Data
 public class Wish {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "wish_id")
+    @Column (name ="wish_id")
     private Integer wishId;
 
-    @Column(nullable = false)
-    private Integer userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(nullable = false)
-    private Integer marketId;
+    @ManyToOne
+    @JoinColumn(name = "market_id")
+    private Market market;
 
-    @Column(nullable = false)
-    private LocalDateTime wishCreateAt;
+    // Getters and setters
 }

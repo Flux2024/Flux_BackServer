@@ -1,9 +1,15 @@
-package com.flux.wish.repository;
+package com.flux.market.repository;
 
-import com.flux.wish.model.Wish;
+import com.flux.market.model.Market;
+import com.flux.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface WishRepository extends JpaRepository<Wish, Integer> {
+import java.util.Optional;
+import java.util.List;
+
+public interface WishListRepository extends JpaRepository<WishListItem, Integer> {
+
+    Optional<WishListItem> findByUserAndMarket(User user, Market market);
+
+    List<WishListItem> findByUser(User user);  // 추가된 메소드
 }
