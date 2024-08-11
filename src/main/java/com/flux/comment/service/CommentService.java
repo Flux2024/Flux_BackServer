@@ -5,6 +5,7 @@ import com.flux.comment.repository.CommentRepository;
 import com.flux.global.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,7 @@ public class CommentService {
     }
 
     // 특정 아티클 ID에 대한 댓글 목록 조회
+    @Transactional
     public List<Comment> getCommentsByArticleId(Integer articleId) {
         if (articleId == null || articleId <= 0) {
             throw new IllegalArgumentException("아티클 ID를 찾을 수 없습니다.");
@@ -30,13 +32,17 @@ public class CommentService {
     }
 
     // 새로운 댓글 작성
+    @Transactional
     public Comment createComment(Comment comment) {
         validateComment(comment);
         checkForDuplicateComment(comment);
+
+        // Save the comment
         return commentRepository.save(comment);
     }
 
     // 댓글 수정
+    @Transactional
     public Comment updateComment(Integer commentId, Comment updatedComment) {
         validateComment(updatedComment);
 
@@ -57,6 +63,7 @@ public class CommentService {
     }
 
     // 댓글 삭제
+    @Transactional
     public void deleteComment(Integer commentId) {
         Optional<Comment> existingComment = commentRepository.findById(commentId);
         if (existingComment.isPresent()) {
@@ -94,6 +101,7 @@ public class CommentService {
     }
 
     // 댓글추천 관련 로직
+    @Transactional
     public Comment likeComment(Integer id) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
