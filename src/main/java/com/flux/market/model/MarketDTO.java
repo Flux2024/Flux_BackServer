@@ -28,6 +28,8 @@ public class MarketDTO {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private int marketView;
+    private Integer currentHighestBid; // 현재 최고 입찰가를 저장하는 필드
+    private boolean sold; // 판매 여부
 
     private Integer userId;
 }
