@@ -64,7 +64,7 @@ public class OAuth2Service {
             User user = saveOrUpdateUser(email, name);
 
             logger.info("Naver user info: " + userId + ", " + email + ", " + name);
-            return generateJwtToken(user.getUserId(), email, name); // 변경: userId 대신 user.getUserId() 사용
+            return generateJwtToken(user.getUserId(), email, name, user.getRole().name()); // 변경: userId 대신 user.getUserId() 사용
         } catch (HttpClientErrorException e) {
             logger.log(Level.SEVERE, "Failed to get user info from Naver", e);
             throw new RuntimeException("Failed to get user info from Naver", e);
@@ -113,9 +113,10 @@ public class OAuth2Service {
             response.put("jwtToken", jwtToken);
         }
         if (user != null) {
-            response.put("userId", user.getUserId().toString()); // userId 추가
+            response.put("userId", user.getUserId().toString());
             response.put("email", user.getEmail());
             response.put("name", user.getUsername());
+            response.put("role", user.getRole().name()); // role 정보 추가
         }
         return ResponseEntity.ok(response);
     }
@@ -143,7 +144,7 @@ public class OAuth2Service {
             User user = saveOrUpdateUser(email, name);
 
             logger.info("Google user info: " + userId + ", " + email + ", " + name);
-            return generateJwtToken(user.getUserId(), email, name);
+            return generateJwtToken(user.getUserId(), email, name, user.getRole().name());
         } catch (Exception e) {
             logger.log(Level.SEVERE, "An unexpected error occurred", e);
             throw new RuntimeException("An unexpected error occurred", e);
@@ -158,11 +159,12 @@ public class OAuth2Service {
         return userRepository.save(user);
     }
 
-    private String generateJwtToken(Integer userId, String email, String name) {
+    private String generateJwtToken(Integer userId, String email, String name, String role) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId); // userId 추가
+        claims.put("userId", userId);
         claims.put("email", email);
         claims.put("name", name);
+        claims.put("role", role); // role 정보를 추가
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -172,6 +174,7 @@ public class OAuth2Service {
                 .signWith(SignatureAlgorithm.HS512, tokenSecret)
                 .compact();
     }
+
 
     public User getUserFromJwtToken(String jwtToken) {
         String email = Jwts.parser().setSigningKey(tokenSecret).parseClaimsJws(jwtToken).getBody().getSubject();
