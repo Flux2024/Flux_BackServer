@@ -14,48 +14,50 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:8000") // 프론트엔드 서버 주소
 public class BidController {
 
-    @Autowired
-    private BidService bidService;
+    private final BidService bidService;
 
-//    @PostMapping("/register")
-//    public ResponseEntity<BidDTO> registerBid(@RequestBody BidDTO bidDTO) {
-//        try {
-//            // bidDTO의 bidId가 null일 수 있으므로, 해당 필드에 대한 처리 로직 필요
-//            Bid bid = bidService.registerBid(
-//                    bidDTO.getMarketId(),
-//                    bidDTO.getUserId(),
-//                    bidDTO.getBidAmount(),
-//                    bidDTO.getBidTime()
-//            );
-//            // Bid 엔티티를 BidDTO로 변환하여 반환합니다.
-//            BidDTO responseDTO = new BidDTO(
-//                    bid.getMarket().getMarketId(),
-//                    bid.getUser().getUserId(),
-//                    bid.getBidAmount(),
-//                    bid.getBidTime(),
-//                    bid.getStatus()
-//            );
-//            return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
-//        } catch (RuntimeException e) {
-//            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-//        }
-//    }
+    @Autowired
+    public BidController(BidService bidService) {
+        this.bidService = bidService;
+    }
+
+    // 입찰하기
     @PostMapping("/register")
-    public ResponseEntity<Bid> registerBid(@RequestBody BidDTO bidDTO) {
+    public ResponseEntity<BidDTO> registerBid(@RequestBody BidDTO bidDTO) {
         try {
-            // bidDTO의 bidId가 null일 수 있으므로, 해당 필드에 대한 처리 로직 필요
+            // BidDTO를 통해 입찰 등록 로직을 처리
             Bid bid = bidService.registerBid(
                     bidDTO.getMarketId(),
                     bidDTO.getUserId(),
                     bidDTO.getBidAmount(),
                     bidDTO.getBidTime()
             );
-            return new ResponseEntity<>(bid, HttpStatus.CREATED);
+
+            // Bid 엔티티를 BidDTO로 변환하여 반환합니다.
+            BidDTO responseDTO = new BidDTO(
+                    bid.getMarket().getMarketId(),
+                    bid.getUser().getUserId(),
+                    bid.getBidAmount(),
+                    bid.getBidTime(),
+                    bid.getStatus(),
+                    bid.isSold()
+            );
+
+            return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
+    // 현재 최고 입찰 가격 가져오기
+    @GetMapping("/market/{marketId}/current-bid")
+    public ResponseEntity<Integer> getCurrentHighestBid(@PathVariable("marketId") Integer marketId) {
+        Integer highestBidAmount = bidService.getHighestBidAmount(marketId);
+        return ResponseEntity.ok(highestBidAmount);
+    }
+
+
+    // 즉시구매하기
     @PostMapping("/buy-now")
     public ResponseEntity<String> buyNow(@RequestBody BuyNowRequest buyNowRequest) {
         try {

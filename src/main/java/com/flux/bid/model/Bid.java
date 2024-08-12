@@ -37,15 +37,19 @@ public class Bid {
     @Enumerated(EnumType.STRING)
     private BidStatus status;
 
+    @Column(name = "sold")
+    private boolean sold;
+
     public Bid() {
     }
 
-    public Bid(Market market, User user, int bidAmount, LocalDateTime bidTime, BidStatus status) {
+    public Bid(Market market, User user, int bidAmount, LocalDateTime bidTime, BidStatus status, boolean sold) {
         this.market = market;
         this.user = user;
         this.bidAmount = bidAmount;
         this.bidTime = bidTime;
         this.status = status;
+        this.sold = sold;
     }
 
     @Override
@@ -57,6 +61,7 @@ public class Bid {
                 ", bidAmount=" + bidAmount +
                 ", bidTime=" + bidTime +
                 ", status=" + status +
+                ", sold=" + sold +
                 '}';
     }
 }

@@ -2,7 +2,6 @@ package com.flux.bid.service;
 
 import com.flux.auth.repository.UserRepository;
 import com.flux.bid.model.Bid;
-import com.flux.bid.model.BidDTO;
 import com.flux.bid.model.BidStatus;
 import com.flux.bid.repository.BidRepository;
 import com.flux.market.model.Market;
@@ -13,10 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class BidService {
+
     @Autowired
     private BidRepository bidRepository;
 
@@ -26,69 +26,61 @@ public class BidService {
     @Autowired
     private UserRepository userRepository;
 
+    // 입찰하기 서비스
     @Transactional
     public Bid registerBid(Integer marketId, Integer userId, int bidAmount, LocalDateTime bidTime) {
-        Optional<Market> marketOpt = marketRepository.findById(marketId);
-        Optional<User> userOpt = userRepository.findById(userId);
+        Market market = marketRepository.findById(marketId)
+                .orElseThrow(() -> new RuntimeException("마켓을 찾을 수 없습니다"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
 
-        if (marketOpt.isEmpty()) {
-            throw new RuntimeException("마켓을 찾을 수 없습니다");
-        }
-        if (userOpt.isEmpty()) {
-            throw new RuntimeException("사용자를 찾을 수 없습니다");
-        }
+        // 현재 마켓에 대한 최고 입찰 금액 계산
+        Integer highestBidAmount = bidRepository.findCurrentHighestBidByMarketId(marketId);
 
-        Market market = marketOpt.get();
-        User user = userOpt.get();
-
-        market = marketRepository.findByIdForUpdate(marketId);
-        if (market == null) {
-            throw new RuntimeException("마켓을 찾을 수 없습니다");
-        }
-
-        if (bidAmount <= market.getCurrentHighestBid()) {
+        // 현재 입찰가가 최고 입찰가보다 높은지 확인
+        if (highestBidAmount != null && bidAmount <= highestBidAmount) {
             throw new RuntimeException("입찰 금액이 충분하지 않습니다");
         }
 
-        market.setCurrentHighestBid(bidAmount);
-        marketRepository.save(market);
+        // 새로운 입찰 등록
+        Bid bid = new Bid(market, user, bidAmount, bidTime, BidStatus.ACTIVE, true);
 
-        BidDTO bidDTO = new BidDTO(marketId, userId, bidAmount, bidTime, BidStatus.ACTIVE);
-
-        Bid bid = new Bid(market, user, bidAmount, bidTime, BidStatus.ACTIVE);
         return bidRepository.save(bid);
     }
 
+    // 입찰 최고가 보여주기 위한 서비스
+    public Integer getHighestBidAmount(Integer marketId) {
+        return bidRepository.findTopByMarket_MarketIdOrderByBidAmountDesc(marketId)
+                .map(Bid::getBidAmount)
+                .orElse(null);
+    }
+
+    // 즉시구매하기 서비스
     @Transactional
     public void buyNow(Integer marketId, Integer userId) {
-        // 마켓과 사용자 조회
-        Market market = marketRepository.findByIdForUpdate(marketId);
-        if (market == null) {
-            throw new RuntimeException("마켓을 찾을 수 없습니다");
-        }
+        Market market = marketRepository.findById(marketId)
+                .orElseThrow(() -> new RuntimeException("마켓을 찾을 수 없습니다"));
 
-        Optional<User> userOpt = userRepository.findById(userId);
-        if (userOpt.isEmpty()) {
-            throw new RuntimeException("사용자를 찾을 수 없습니다");
-        }
-        User user = userOpt.get();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
 
-        // 즉시 구매 조건 검증
-        if (market.isSold()) {
-            throw new RuntimeException("상품이 이미 판매되었습니다");
-        }
-        if (market.getMarketMaxPrice() == null || market.getCurrentHighestBid() == null) {
-            throw new RuntimeException("상품이 즉시 구매 가능하지 않습니다");
-        }
-        if (market.getMarketMaxPrice() <= market.getCurrentHighestBid()) {
+        // 동시성 문제를 방지하기 위해 마켓에 대한 입찰을 잠급니다.
+        List<Bid> bids = bidRepository.findBidsByMarketIdForUpdate(marketId);
+
+        // 현재 최고 입찰가를 가져옵니다.
+        Integer highestBidAmount = bidRepository.findCurrentHighestBidByMarketId(marketId);
+
+        // 현재 최고 입찰가가 마켓의 최대 가격 이상인지 확인
+        if (highestBidAmount != null && highestBidAmount >= market.getMarketMaxPrice()) {
             throw new RuntimeException("현재 가격으로 구매할 수 없습니다");
         }
 
-        // 기존 입찰 취소
+        // 현재 입찰 상태를 취소로 업데이트
         bidRepository.updateBidStatusByMarketId(marketId, BidStatus.CANCELLED);
 
-        // 마켓 상태 업데이트 및 저장
-        market.setSold(true);
-        marketRepository.save(market);
+        // 구매 완료 입찰 등록
+        Bid bid = new Bid(market, user, market.getMarketMaxPrice(), LocalDateTime.now(), BidStatus.COMPLETED, true);
+
+        bidRepository.save(bid);
     }
 }
