@@ -43,6 +43,12 @@ public class UserService {
         // 이 결과는 List<User>로 반환되며, 전체 사용자 목록을 포함합니다.
     }
 
+    // 사용자 수를 계산하는 메서드 추가
+    @Transactional
+    public long countUsers() {
+        return userRepository.count(); // 사용자 수를 반환
+    }
+
     // 사용자의 역할(Role) 업데이트
     @Transactional
     public User updateUserRole(Integer userId, Role newRole) {
