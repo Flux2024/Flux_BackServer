@@ -6,19 +6,21 @@ public class BidDTO {
 
     private Integer marketId;
     private Integer userId;
-    private int bidAmount;
+    private int bidAmount; // 현재 입찰가
     private LocalDateTime bidTime;
     private BidStatus status; // 상태 추가
+    private boolean sold; // 판매 여부
 
     public BidDTO() {
     }
 
-    public BidDTO(Integer marketId, Integer userId, int bidAmount, LocalDateTime bidTime, BidStatus status) {
+    public BidDTO(Integer marketId, Integer userId, int bidAmount, LocalDateTime bidTime, BidStatus status, boolean sold) {
         this.marketId = marketId;
         this.userId = userId;
         this.bidAmount = bidAmount;
         this.bidTime = bidTime;
         this.status = status;
+        this.sold = sold;
     }
 
     public Integer getMarketId() {
@@ -61,6 +63,14 @@ public class BidDTO {
         this.status = status;
     }
 
+    public boolean isSold() {
+        return sold;
+    }
+
+    public void setSold(boolean sold) {
+        this.sold = sold;
+    }
+
     @Override
     public String toString() {
         return "BidDTO{" +
@@ -69,6 +79,7 @@ public class BidDTO {
                 ", bidAmount=" + bidAmount +
                 ", bidTime=" + bidTime +
                 ", status=" + status +
+                ", sold=" + sold +
                 '}';
     }
 }

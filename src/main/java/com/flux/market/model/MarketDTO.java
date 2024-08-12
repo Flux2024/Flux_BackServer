@@ -15,22 +15,19 @@ import java.util.List;
 public class MarketDTO {
 
     private Integer marketId;
-    private String marketName;
-    private String auctionDuration;
     private List<String> marketImgs; // 수정: String -> List<String>
+    private String marketName;
     private int marketPrice;
     private int marketMaxPrice;
     private String marketCategory;
     private String marketContents;
     private MarketStatus marketOrderablestatus;
-    private LocalDateTime marketCreateAt;
-    private LocalDateTime marketUpdateAt;
-    private LocalDateTime marketSelldate;
+    private LocalDateTime marketCreatedAt;
+    private LocalDateTime marketUpdatedAt;
+    private LocalDateTime marketSellDate;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private int marketView;
-    private Integer currentHighestBid; // 현재 최고 입찰가를 저장하는 필드
-    private boolean sold; // 판매 여부
 
     private Integer userId;
 }

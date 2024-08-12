@@ -48,7 +48,7 @@ public class ArticleController {
         articleDTO.setUserId(user.getUserId()); // 사용자 ID 설정
 
         Map<String, Object> response = new HashMap<>();
-        // if문
+        // if문 변경예정
         try {
             Article savedArticle = articleService.saveArticle(articleDTO, multipartFiles);
             response.put("message", "아티클이 성공적으로 등록되었습니다.");
