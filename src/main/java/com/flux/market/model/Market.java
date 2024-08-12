@@ -76,4 +76,5 @@ public class Market {
     @Column(name = "market_view", nullable = false)
     private int marketView;
 
+
 }
