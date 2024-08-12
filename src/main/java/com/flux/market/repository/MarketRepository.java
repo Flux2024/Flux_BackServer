@@ -11,8 +11,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MarketRepository extends JpaRepository<Market, Integer> {
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT m FROM Market m WHERE m.marketId = :marketId")
-    Market findByIdForUpdate(@Param("marketId") Integer marketId);
 
 }
