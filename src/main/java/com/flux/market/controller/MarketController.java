@@ -1,6 +1,7 @@
 package com.flux.market.controller;
 
 import com.flux.market.model.MarketDTO;
+import com.flux.market.model.MarketStatus;
 import com.flux.market.service.MarketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,6 +48,12 @@ public class MarketController {
     public ResponseEntity<MarketDTO> updateMarket(@PathVariable Integer marketId, @RequestBody MarketDTO marketDetails) {
         MarketDTO updatedMarketDTO = marketService.updateMarket(marketId, marketDetails);
         return ResponseEntity.ok(updatedMarketDTO);
+    }
+
+    // 마켓 상태값 변화를 위한 메서드(화연)
+    @PutMapping("/{marketId}/status")
+    public void updateMarketStatus(@PathVariable Integer marketId, @RequestParam MarketStatus newStatus) {
+        marketService.updateMarketStatus(marketId, newStatus);
     }
 
     @DeleteMapping("/{marketId}")

@@ -2,8 +2,11 @@ package com.flux.bid.controller;
 
 import com.flux.bid.model.Bid;
 import com.flux.bid.model.BidDTO;
+import com.flux.bid.model.BidStatus;
 import com.flux.bid.model.BuyNowRequest;
 import com.flux.bid.service.BidService;
+import com.flux.market.model.Market;
+import com.flux.market.model.MarketStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,11 +52,31 @@ public class BidController {
         }
     }
 
+    // 현재 입찰 상황을 알려주기 위한 메서드
+    @GetMapping("/market/{marketId}/status")
+    public ResponseEntity<BidStatus> getBidStatus(@PathVariable Integer marketId) {
+        BidStatus bidStatus = bidService.getBidStatusForMarket(marketId);
+        return ResponseEntity.ok(bidStatus);
+    }
+
     // 현재 최고 입찰 가격 가져오기
     @GetMapping("/market/{marketId}/current-bid")
     public ResponseEntity<Integer> getCurrentHighestBid(@PathVariable("marketId") Integer marketId) {
-        Integer highestBidAmount = bidService.getHighestBidAmount(marketId);
-        return ResponseEntity.ok(highestBidAmount);
+        try {
+            Market market = bidService.getMarketById(marketId);
+
+            if (market.getMarketStatus() == MarketStatus.SOLD_OUT) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 이미 판매된 경우 404 반환
+            }
+
+            Integer highestBidAmount = bidService.getHighestBidAmount(marketId);
+            if (highestBidAmount == null) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 최고 입찰가가 없을 경우 204 반환
+            }
+            return ResponseEntity.ok(highestBidAmount);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // 서버 오류
+        }
     }
 
 
