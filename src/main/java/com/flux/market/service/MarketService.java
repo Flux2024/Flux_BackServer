@@ -9,13 +9,16 @@ import com.flux.user.model.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -121,6 +124,7 @@ public class MarketService {
     }
 
     // 마켓의 MarketStatus가 솔드아웃 되면 주문가능 상태도 false로 바꾸게 하는 메서드 추가함.(화연)
+    @Transactional
     public void updateMarketStatus(Integer marketId, MarketStatus newStatus) {
         Market market = marketRepository.findById(marketId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid market ID"));
@@ -128,5 +132,17 @@ public class MarketService {
         market.setMarketStatus(newStatus); // 상태 업데이트 및 orderable 상태 자동 변경
 
         marketRepository.save(market);
+    }
+
+    // 경매 종료된 마켓의 상태를 SOLD_OUT으로 변경
+    @Scheduled(cron = "0 0 * * * ?") // 정각에 매번 실행
+    public void updateExpiredMarkets() {
+        LocalDateTime now = LocalDateTime.now();
+        List<Market> expiredMarkets = marketRepository.findAllByEndDateBeforeAndMarketStatus(now, MarketStatus.AVAILABLE);
+
+        for (Market market : expiredMarkets) {
+            market.setMarketStatus(MarketStatus.SOLD_OUT);
+            marketRepository.save(market);
+        }
     }
 }
