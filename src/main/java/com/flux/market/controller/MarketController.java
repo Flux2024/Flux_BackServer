@@ -33,6 +33,7 @@ public class MarketController {
         return ResponseEntity.ok(markets);
     }
 
+
     @GetMapping("/{marketId}")
     public ResponseEntity<MarketDTO> getMarketById(@PathVariable Integer marketId) {
         MarketDTO marketDTO = marketService.findById(marketId);
