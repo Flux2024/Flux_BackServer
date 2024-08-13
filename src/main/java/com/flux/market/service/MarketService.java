@@ -1,6 +1,7 @@
 package com.flux.market.service;
 
 import com.flux.auth.repository.UserRepository;
+import com.flux.bid.repository.BidRepository;
 import com.flux.market.model.Market;
 import com.flux.market.model.MarketDTO;
 import com.flux.market.model.MarketStatus;
@@ -28,11 +29,13 @@ public class MarketService {
 
     private final MarketRepository marketRepository;
     private final UserRepository userRepository;
+    private final BidRepository bidRepository;
 
     @Autowired
-    public MarketService(MarketRepository marketRepository, UserRepository userRepository) {
+    public MarketService(MarketRepository marketRepository, UserRepository userRepository,BidRepository bidRepository) {
         this.marketRepository = marketRepository;
         this.userRepository = userRepository;
+        this.bidRepository = bidRepository;
     }
 
     public List<MarketDTO> findAll() {
@@ -78,10 +81,26 @@ public class MarketService {
         return convertToDTO(updatedMarket);
     }
 
+    // 삭제 로직 추가함(화연)
     public void deleteById(Integer marketId) {
+        // 1. 시장 존재 여부 확인
         if (!marketRepository.existsById(marketId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 상품이 없습니다.");
         }
+
+        // 2. 현재 상품의 상태 조회
+        Market market = marketRepository.findById(marketId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 상품이 없습니다."));
+
+        // 3. 상품 상태가 SOLD_OUT이 아닌 경우 삭제 불가
+        if (!MarketStatus.SOLD_OUT.equals(market.getMarketStatus())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "해당 상품은 현재 삭제할 수 없습니다.");
+        }
+
+        // 4. 외래 키 제약 조건을 만족하도록 관련 레코드 삭제
+        bidRepository.deleteByMarketId(marketId);
+
+        // 5. 상품 삭제
         marketRepository.deleteById(marketId);
     }
 
@@ -145,4 +164,13 @@ public class MarketService {
             marketRepository.save(market);
         }
     }
+
+    // 유저의 판매 내역 조회(화연)
+    public List<MarketDTO> findSalesByUserId(Integer userId) {
+        List<Market> markets = marketRepository.findAllByUser_UserId(userId); // 유저 ID로 판매 내역 조회
+        return markets.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
 }

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -56,10 +57,19 @@ public class MarketController {
         marketService.updateMarketStatus(marketId, newStatus);
     }
 
+    // 삭제 로직 추가(화연)
     @DeleteMapping("/{marketId}")
     public ResponseEntity<Void> deleteMarket(@PathVariable Integer marketId) {
-        marketService.deleteById(marketId);
-        return ResponseEntity.noContent().build();
+        try {
+            marketService.deleteById(marketId);
+            return ResponseEntity.noContent().build();  // 성공적으로 삭제된 경우
+        } catch (ResponseStatusException ex) {
+            HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
+            return ResponseEntity.status(status).build();  // 예외에 따라 적절한 상태 코드 반환
+        } catch (Exception ex) {
+            // 다른 예외를 처리하는 경우
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping("/upload")
@@ -76,4 +86,12 @@ public class MarketController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    // 유저의 판매 내역 조회(화연)
+    @GetMapping("/user/{userId}/sales")
+    public ResponseEntity<List<MarketDTO>> getSalesByUserId(@PathVariable Integer userId) {
+        List<MarketDTO> sales = marketService.findSalesByUserId(userId);
+        return ResponseEntity.ok(sales);
+    }
+
 }
