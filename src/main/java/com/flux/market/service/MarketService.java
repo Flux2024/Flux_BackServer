@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -39,11 +40,14 @@ public class MarketService {
     }
 
     public List<MarketDTO> findAll() {
-        return marketRepository.findAll()
-                .stream()
+        List<Market> markets = marketRepository.findAll();
+        Collections.reverse(markets);
+        markets.forEach(market -> System.out.println("Market Images: " + market.getMarketImgs()));
+        return markets.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
 
     public MarketDTO findById(Integer marketId) {
         Market market = marketRepository.findById(marketId)
