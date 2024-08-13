@@ -21,7 +21,8 @@ public class MarketDTO {
     private int marketMaxPrice;
     private String marketCategory;
     private String marketContents;
-    private MarketStatus marketOrderablestatus;
+    private MarketStatus marketStatus;
+    private boolean marketOrderableStatus;
     private LocalDateTime marketCreatedAt;
     private LocalDateTime marketUpdatedAt;
     private LocalDateTime marketSellDate;
@@ -30,4 +31,11 @@ public class MarketDTO {
     private int marketView;
 
     private Integer userId;
+
+    public void setMarketStatus(MarketStatus marketStatus) {
+        this.marketStatus = marketStatus;
+        if (marketStatus == MarketStatus.SOLD_OUT) {
+            this.marketOrderableStatus = false;
+        }
+    }
 }

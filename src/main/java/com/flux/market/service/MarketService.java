@@ -3,6 +3,7 @@ package com.flux.market.service;
 import com.flux.auth.repository.UserRepository;
 import com.flux.market.model.Market;
 import com.flux.market.model.MarketDTO;
+import com.flux.market.model.MarketStatus;
 import com.flux.market.repository.MarketRepository;
 import com.flux.user.model.User;
 import org.springframework.beans.BeanUtils;
@@ -117,5 +118,15 @@ public class MarketService {
         file.transferTo(new File(dir.getAbsolutePath() + "/" + saveName));
 
         return "/img/uploads/" + saveName;
+    }
+
+    // 마켓의 MarketStatus가 솔드아웃 되면 주문가능 상태도 false로 바꾸게 하는 메서드 추가함.(화연)
+    public void updateMarketStatus(Integer marketId, MarketStatus newStatus) {
+        Market market = marketRepository.findById(marketId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid market ID"));
+
+        market.setMarketStatus(newStatus); // 상태 업데이트 및 orderable 상태 자동 변경
+
+        marketRepository.save(market);
     }
 }

@@ -76,5 +76,11 @@ public class Market {
     @Column(name = "market_view", nullable = false)
     private int marketView;
 
+    public void setMarketStatus(MarketStatus marketStatus) {
+        this.marketStatus = marketStatus;
+        if (marketStatus == MarketStatus.SOLD_OUT) {
+            this.marketOrderableStatus = false;
+        }
+    }
 
 }

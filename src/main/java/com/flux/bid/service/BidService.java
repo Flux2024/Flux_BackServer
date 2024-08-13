@@ -5,6 +5,7 @@ import com.flux.bid.model.Bid;
 import com.flux.bid.model.BidStatus;
 import com.flux.bid.repository.BidRepository;
 import com.flux.market.model.Market;
+import com.flux.market.model.MarketStatus;
 import com.flux.market.repository.MarketRepository;
 import com.flux.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,20 +18,32 @@ import java.util.List;
 @Service
 public class BidService {
 
-    @Autowired
     private BidRepository bidRepository;
-
-    @Autowired
     private MarketRepository marketRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    public BidService(BidRepository bidRepository, MarketRepository marketRepository, UserRepository userRepository) {
+        this.bidRepository = bidRepository;
+        this.marketRepository = marketRepository;
+        this.userRepository = userRepository;
+    }
+
+    // 마켓을 ID로 조회하는 메서드 추가
+    public Market getMarketById(Integer marketId) {
+        return marketRepository.findById(marketId)
+                .orElseThrow(() -> new RuntimeException("마켓을 찾을 수 없습니다"));
+    }
+
+    // 입찰 최고가 보여주기 위한 서비스
+    public Integer getHighestBidAmount(Integer marketId) {
+        return bidRepository.findCurrentHighestBidByMarketId(marketId);
+    }
 
     // 입찰하기 서비스
     @Transactional
     public Bid registerBid(Integer marketId, Integer userId, int bidAmount, LocalDateTime bidTime) {
-        Market market = marketRepository.findById(marketId)
-                .orElseThrow(() -> new RuntimeException("마켓을 찾을 수 없습니다"));
+        Market market = getMarketById(marketId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
 
@@ -48,39 +61,43 @@ public class BidService {
         return bidRepository.save(bid);
     }
 
-    // 입찰 최고가 보여주기 위한 서비스
-    public Integer getHighestBidAmount(Integer marketId) {
-        return bidRepository.findTopByMarket_MarketIdOrderByBidAmountDesc(marketId)
-                .map(Bid::getBidAmount)
-                .orElse(null);
+    // 입찰 상태 가져오기 서비스
+    public BidStatus getBidStatusForMarket(Integer marketId) {
+        List<Bid> bids = bidRepository.findByMarket_MarketIdOrderByBidAmountDesc(marketId);
+
+        if (bids.isEmpty()) {
+            return BidStatus.NONE; // 입찰 전 상태
+        }
+
+        Market market = getMarketById(marketId);
+        if (market.getMarketStatus() == MarketStatus.SOLD_OUT) {
+            return BidStatus.COMPLETED;
+        }
+
+        return BidStatus.ACTIVE; // 입찰 중 상태
     }
 
     // 즉시구매하기 서비스
     @Transactional
     public void buyNow(Integer marketId, Integer userId) {
-        Market market = marketRepository.findById(marketId)
-                .orElseThrow(() -> new RuntimeException("마켓을 찾을 수 없습니다"));
-
+        Market market = getMarketById(marketId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
 
-        // 동시성 문제를 방지하기 위해 마켓에 대한 입찰을 잠급니다.
         List<Bid> bids = bidRepository.findBidsByMarketIdForUpdate(marketId);
 
-        // 현재 최고 입찰가를 가져옵니다.
         Integer highestBidAmount = bidRepository.findCurrentHighestBidByMarketId(marketId);
 
-        // 현재 최고 입찰가가 마켓의 최대 가격 이상인지 확인
         if (highestBidAmount != null && highestBidAmount >= market.getMarketMaxPrice()) {
             throw new RuntimeException("현재 가격으로 구매할 수 없습니다");
         }
 
-        // 현재 입찰 상태를 취소로 업데이트
         bidRepository.updateBidStatusByMarketId(marketId, BidStatus.CANCELLED);
 
-        // 구매 완료 입찰 등록
         Bid bid = new Bid(market, user, market.getMarketMaxPrice(), LocalDateTime.now(), BidStatus.COMPLETED, true);
-
         bidRepository.save(bid);
+
+        market.setMarketStatus(MarketStatus.SOLD_OUT);
+        marketRepository.save(market);
     }
 }
