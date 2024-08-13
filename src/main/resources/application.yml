@@ -1,72 +1,72 @@
 spring:
   application:
-    name: ${SPRING_APPLICATION_NAME:FLUX}
+    name: ${SPRING_APPLICATION_NAME}
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/flux_db}
-    username: ${SPRING_DATASOURCE_USERNAME:flux}
-    password: ${SPRING_DATASOURCE_PASSWORD:flux}
-    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
   jpa:
     hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
     properties:
       hibernate:
-        dialect: ${SPRING_JPA_HIBERNATE_DIALECT:org.hibernate.dialect.MySQLDialect}
+        dialect: ${SPRING_JPA_HIBERNATE_DIALECT}
         format_sql: true
-    show-sql: ${SPRING_JPA_SHOW_SQL:true}
+    show-sql: ${SPRING_JPA_SHOW_SQL}
   server:
-    port: ${SPRING_SERVER_PORT:8080}
+    port: ${SPRING_SERVER_PORT}
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID:1009714069325-ktbie6b6ipt0m71dkdgv21gnqsnk11l4.apps.googleusercontent.com}
-            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: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}
-            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI:http://localhost:8000/login/oauth2/code/google}
-            authorization-grant-type: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_AUTHORIZATION_GRANT_TYPE:authorization_code}
+            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID}
+            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI}
+            authorization-grant-type: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_AUTHORIZATION_GRANT_TYPE}
             scope:
-              - ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE_PROFILE:profile}
-              - ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE_EMAIL:email}
+              - ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE_PROFILE}
+              - ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE_EMAIL}
           naver:
-            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_ID:teR1JDcGa4Dv2AAhrfpv}
-            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_SECRET:rJZ2lcOJQk}
-            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI:http://localhost:8000/login/oauth2/code/naver}
-            client-name: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_NAME:naver}
-            authorization-grant-type: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_AUTHORIZATION_GRANT_TYPE:authorization_code}
+            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_ID}
+            client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_SECRET}
+            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_REDIRECT_URI}
+            client-name: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_NAME}
+            authorization-grant-type: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_AUTHORIZATION_GRANT_TYPE}
             scope:
-              - ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_SCOPE_NAME:name}
-              - ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_SCOPE_EMAIL:email}
+              - ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_SCOPE_NAME}
+              - ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_SCOPE_EMAIL}
         provider:
           naver:
-            authorization-uri: ${SPRING_SECURITY_OAUTH2_PROVIDER_NAVER_AUTHORIZATION_URI:https://nid.naver.com/oauth2.0/authorize}
-            token-uri: ${SPRING_SECURITY_OAUTH2_PROVIDER_NAVER_TOKEN_URI:https://nid.naver.com/oauth2.0/token}
-            user-info-uri: ${SPRING_SECURITY_OAUTH2_PROVIDER_NAVER_USER_INFO_URI:https://openapi.naver.com/v1/nid/me}
-            user-name-attribute: ${SPRING_SECURITY_OAUTH2_PROVIDER_NAVER_USER_NAME_ATTRIBUTE:response.id}
+            authorization-uri: ${SPRING_SECURITY_OAUTH2_PROVIDER_NAVER_AUTHORIZATION_URI}
+            token-uri: ${SPRING_SECURITY_OAUTH2_PROVIDER_NAVER_TOKEN_URI}
+            user-info-uri: ${SPRING_SECURITY_OAUTH2_PROVIDER_NAVER_USER_INFO_URI}
+            user-name-attribute: ${SPRING_SECURITY_OAUTH2_PROVIDER_NAVER_USER_NAME_ATTRIBUTE}
   servlet:
     multipart:
-      enabled: ${SPRING_SERVLET_MULTIPART_ENABLED:true}
-      max-file-size: ${SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE:10MB}
-      max-request-size: ${SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE:10MB}
+      enabled: ${SPRING_SERVLET_MULTIPART_ENABLED}
+      max-file-size: ${SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE}
+      max-request-size: ${SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE}
     mvc:
-      static-path-pattern: ${SPRING_SERVLET_MVC_STATIC_PATH_PATTERN:/static/**}
+      static-path-pattern: ${SPRING_SERVLET_MVC_STATIC_PATH_PATTERN}
 app:
   auth:
-    tokenSecret: ${APP_AUTH_TOKEN_SECRET:04ca023b39512e46d0c2cf4b48d5aac61d34302994c87ed4eff225dcf3b0a218739f3897051a057f9b846a69ea2927a587044164b7bae5e1306219d50b588cb1}
-    tokenExpirationMsec: ${APP_AUTH_TOKEN_EXPIRATION_MSEC:864000000}
+    tokenSecret: ${APP_AUTH_TOKEN_SECRET}
+    tokenExpirationMsec: ${APP_AUTH_TOKEN_EXPIRATION_MSEC}
   cors:
     allowedOrigins:
-      - ${APP_CORS_ALLOWED_ORIGINS:http://localhost:8000}
+      - ${APP_CORS_ALLOWED_ORIGINS}
 logging:
   level:
-    root: ${LOGGING_LEVEL_ROOT:INFO}
-    com.flux.auth: ${LOGGING_LEVEL_COM_FLUX_AUTH:DEBUG}
-    org.springframework.security: ${LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY:DEBUG}
+    root: ${LOGGING_LEVEL_ROOT}
+    com.flux.auth: ${LOGGING_LEVEL_COM_FLUX_AUTH}
+    org.springframework.security: ${LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY}
 springdoc:
   swagger-ui:
-    path: ${SPRINGDOC_SWAGGER_UI_PATH:/api-test}
-    groups-order: ${SPRINGDOC_SWAGGER_UI_GROUPS_ORDER:DESC}
-    tags-sorter: ${SPRINGDOC_SWAGGER_UI_TAGS_SORTER:alpha}
-    operations-sorter: ${SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER:method}
+    path: ${SPRINGDOC_SWAGGER_UI_PATH}
+    groups-order: ${SPRINGDOC_SWAGGER_UI_GROUPS_ORDER}
+    tags-sorter: ${SPRINGDOC_SWAGGER_UI_TAGS_SORTER}
+    operations-sorter: ${SPRINGDOC_SWAGGER_UI_OPERATIONS_SORTER}
   paths-to-match:
-    - ${SPRINGDOC_PATHS_TO_MATCH:/api/v1/**}
+    - ${SPRINGDOC_PATHS_TO_MATCH}
