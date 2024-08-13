@@ -38,4 +38,15 @@ public class MarketDTO {
             this.marketOrderableStatus = false;
         }
     }
+
+    private MarketDTO convertToDTO(Market market) {
+        // Market 객체를 MarketDTO로 변환하는 로직을 구현
+        MarketDTO dto = new MarketDTO();
+        dto.setMarketId(market.getMarketId());
+        dto.setMarketName(market.getMarketName());
+        dto.setMarketImgs(market.getMarketImgs());
+        dto.setMarketStatus(market.getMarketStatus());
+
+        return dto;
+    }
 }

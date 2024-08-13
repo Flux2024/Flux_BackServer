@@ -32,8 +32,13 @@ public interface BidRepository extends JpaRepository<Bid, Integer> {
     @Query("SELECT b FROM Bid b WHERE b.market.marketId = :marketId")
     List<Bid> findBidsByMarketIdForUpdate(@Param("marketId") Integer marketId);
 
-    // 추가할 메서드: 특정 마켓 ID로 모든 입찰을 내림차순으로 정렬하여 가져오기
+    // 특정 마켓 ID로 모든 입찰을 내림차순으로 정렬하여 가져오기
     List<Bid> findByMarket_MarketIdOrderByBidAmountDesc(Integer marketId);
 
+    // 특정 마켓 ID로 모든 입찰 삭제
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Bid b WHERE b.market.marketId = :marketId")
+    void deleteByMarketId(@Param("marketId") Integer marketId);
 
 }

@@ -17,4 +17,7 @@ public interface MarketRepository extends JpaRepository<Market, Integer> {
 
     // 경매 종료된 마켓을 조회
     List<Market> findAllByEndDateBeforeAndMarketStatus(LocalDateTime endDate, MarketStatus status);
+
+    // 유저 ID로 판매 내역 조회
+    List<Market> findAllByUser_UserId(Integer userId);
 }
