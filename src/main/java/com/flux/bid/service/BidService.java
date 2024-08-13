@@ -30,12 +30,14 @@ public class BidService {
     }
 
     // 마켓을 ID로 조회하는 메서드 추가
+    @Transactional
     public Market getMarketById(Integer marketId) {
         return marketRepository.findById(marketId)
                 .orElseThrow(() -> new RuntimeException("마켓을 찾을 수 없습니다"));
     }
 
     // 입찰 최고가 보여주기 위한 서비스
+    @Transactional
     public Integer getHighestBidAmount(Integer marketId) {
         return bidRepository.findCurrentHighestBidByMarketId(marketId);
     }
@@ -43,7 +45,9 @@ public class BidService {
     // 입찰하기 서비스
     @Transactional
     public Bid registerBid(Integer marketId, Integer userId, int bidAmount, LocalDateTime bidTime) {
-        Market market = getMarketById(marketId);
+        Market market = marketRepository.findById(marketId)
+                .orElseThrow(() -> new RuntimeException("마켓을 찾을 수 없습니다"));
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
 
@@ -55,6 +59,10 @@ public class BidService {
             throw new RuntimeException("입찰 금액이 충분하지 않습니다");
         }
 
+        if (market.getMarketStatus() == MarketStatus.SOLD_OUT) {
+            throw new RuntimeException("경매가 종료된 상품입니다.");
+        }
+
         // 새로운 입찰 등록
         Bid bid = new Bid(market, user, bidAmount, bidTime, BidStatus.ACTIVE, true);
 
@@ -62,6 +70,7 @@ public class BidService {
     }
 
     // 입찰 상태 가져오기 서비스
+    @Transactional
     public BidStatus getBidStatusForMarket(Integer marketId) {
         List<Bid> bids = bidRepository.findByMarket_MarketIdOrderByBidAmountDesc(marketId);
 
