@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/articles")
-@CrossOrigin(origins = "http://localhost:8000") // 프론트엔드 서버 주소
+@CrossOrigin(origins = "https://flux-front-server.vercel.app") // 프론트엔드 서버 주소
 public class ArticleController {
 
     private final ArticleService articleService;
