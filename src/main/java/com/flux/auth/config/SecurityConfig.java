@@ -31,23 +31,24 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 통합
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/manager/**").hasRole("ADMIN") // /manager/** 경로는 ADMIN 권한 필요
-                        .requestMatchers("/sales/**", "/mypage/**").hasAnyRole("USER", "ADMIN") // /sales/**와 /mypage/** 경로는 USER 또는 ADMIN 권한 필요
-                        .anyRequest().permitAll()) // 나머지 모든 요청은 허용
-                .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true)
-                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(customOAuth2UserService)))
-                .logout(logout -> logout
-                        .logoutUrl("/api/logout")
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            response.setStatus(HttpServletResponse.SC_OK);
-                            response.getWriter().flush();
-                        })
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .permitAll());
+                                .anyRequest().permitAll());
+//                        .requestMatchers("/manager/**").hasRole("ADMIN") // /manager/** 경로는 ADMIN 권한 필요
+//                        .requestMatchers("/sales/**", "/mypage/**").hasAnyRole("USER", "ADMIN") // /sales/**와 /mypage/** 경로는 USER 또는 ADMIN 권한 필요
+//                        .anyRequest().permitAll()) // 나머지 모든 요청은 허용
+//                .oauth2Login(oauth2 -> oauth2
+//                        .loginPage("/login")
+//                        .loginProcessingUrl("/login")
+//                        .defaultSuccessUrl("/", true)
+//                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(customOAuth2UserService)))
+//                .logout(logout -> logout
+//                        .logoutUrl("/api/logout")
+//                        .logoutSuccessHandler((request, response, authentication) -> {
+//                            response.setStatus(HttpServletResponse.SC_OK);
+//                            response.getWriter().flush();
+//                        })
+//                        .invalidateHttpSession(true)
+//                        .deleteCookies("JSESSIONID")
+//                        .permitAll());
 
         return http.build();
     }
