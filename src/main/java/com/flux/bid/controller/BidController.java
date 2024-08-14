@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/bids")
-@CrossOrigin(origins = "http://localhost:8000") // 프론트엔드 서버 주소
+@CrossOrigin(origins = "https://flux-front-server.vercel.app") // 프론트엔드 서버 주소
 public class BidController {
 
     private final BidService bidService;

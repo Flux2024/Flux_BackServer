@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/notification")
-@CrossOrigin(origins = "http://localhost:8000")
+@CrossOrigin(origins = "https://flux-front-server.vercel.app")
 @Tag(name = "Notice API", description = "공지사항 관련 컨트롤러")
 public class NoticeController {
 

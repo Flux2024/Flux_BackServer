@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")
-@CrossOrigin(origins = "http://localhost:8000")
+@CrossOrigin(origins = "https://flux-front-server.vercel.app")
 public class UserController {
 
     private final UserService userService;
