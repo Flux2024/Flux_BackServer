@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/visitor")
-@CrossOrigin(origins = "http://localhost:8000")
+@CrossOrigin(origins = "https://flux-front-server.vercel.app")
 public class VisitorController {
 
     @Autowired

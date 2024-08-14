@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/wish")
-@CrossOrigin(origins = "http://localhost:8000")  // 프론트엔드 서버와의 CORS 설정
+@CrossOrigin(origins = "https://flux-front-server.vercel.app")  // 프론트엔드 서버와의 CORS 설정
 public class WishController {
 
     @Autowired

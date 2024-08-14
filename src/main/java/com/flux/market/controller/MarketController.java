@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/market")
-@CrossOrigin(origins = "http://localhost:8000")  // 프론트엔드 서버와의 CORS 설정
+@CrossOrigin(origins = "https://flux-front-server.vercel.app")  // 프론트엔드 서버와의 CORS 설정
 public class MarketController {
 
     private final MarketService marketService;
